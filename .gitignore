@@ -1,0 +1,9 @@
+# cache
+.DS_Store
+
+# virtualenv
+venv/
+
+# database
+*.json
+backend/db/files
