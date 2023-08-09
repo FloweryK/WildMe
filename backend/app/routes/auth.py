@@ -32,7 +32,11 @@ def on_signup():
     user = {
         'name': name,
         'password': password,
-        'file': None
+        'files': {
+            "data": None,
+            "vocab": None,
+            "weight": None
+        }
     }
 
     # hide credentials

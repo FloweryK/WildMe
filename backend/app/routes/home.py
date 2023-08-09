@@ -29,10 +29,10 @@ def upload():
     file_name = f'{g.user["name"]}_{datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S")}.txt'
 
     # upload to db
-    path = database.fs_upload(f, file_name)
+    path_data = database.fs_upload(f, file_name)
 
     # update user's file path
-    g.user['file'] = path
+    g.user['files']['data'] = path_data
     result = hide_credentials(database.update(name=g.user['name'], user=g.user))
     
     return jsonify(result), CREATED
