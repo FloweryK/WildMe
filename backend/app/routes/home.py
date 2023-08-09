@@ -1,4 +1,3 @@
-import os
 import datetime
 from flask import Blueprint, g, request, jsonify
 from app.utils import login_required, hide_credentials
@@ -27,7 +26,6 @@ def upload():
     f = request.files['file']
 
     # file path
-    os.makedirs('app/db/files', exist_ok=True)
     file_name = f'{g.user["name"]}_{datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S")}.txt'
 
     # upload to db
