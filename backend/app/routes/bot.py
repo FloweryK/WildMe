@@ -3,8 +3,8 @@ from flask import Blueprint, g, request, jsonify
 from app.utils import login_required, hide_credentials
 from app.status_code import *
 from db.database import database
-from model.chatbot import Chatbot
-import model.config as config
+from chatbot.chatbot import Chatbot
+from chatbot import config
 
 
 bot_bp = Blueprint('bot', __name__)

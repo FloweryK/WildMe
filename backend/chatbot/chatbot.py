@@ -1,10 +1,9 @@
-import os
 import argparse
 import torch
 import sentencepiece as spm
 from . import config
 from .constant import *
-from .classifier import Classifier
+from .model.classifier import Classifier
 
 
 class Chatbot:
@@ -44,26 +43,3 @@ class Chatbot:
         answer_decode = self.vocab.DecodeIds(answer)
 
         return question, question_decode, answer, answer_decode
-
-
-if __name__ == "__main__":
-    # argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-w', '--weight', required=True)
-    parser.add_argument('-v', '--vocab', required=True)
-    args = parser.parse_args()
-    
-    path_vocab = args.vocab
-    path_weight = args.weight
-
-    # chatbot
-    chatbot = Chatbot(config, path_vocab, path_weight)
-
-    # chat
-    while True:
-        text = input('text: ')
-        question, question_decode, answer, answer_decode = chatbot.chat(text)
-        print(question)
-        print(question_decode)
-        print(answer)
-        print(answer_decode)
