@@ -63,11 +63,8 @@ class Database:
                 return self.data[i]
         return None
     
-    def fs_upload(self, f, file_name):
-        # save the file
-        path = os.path.join(self.path_fs, file_name)
+    def fs_upload(self, f, path):
         f.save(path)
-        return path
 
 
 database = Database(path_data='db/data.json', path_fs='db/files')

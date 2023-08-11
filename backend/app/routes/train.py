@@ -1,6 +1,5 @@
 import os
 import time
-import datetime
 import threading
 import torch
 from flask import Blueprint, g, request, jsonify
@@ -56,7 +55,7 @@ class TrainBluePrint(Blueprint):
                 user = self.queue.pop(0)
 
                 path_data = user['files']['data']
-                path_vocab = 'testvocab.model'
+                path_vocab = user['files']['vocab']
                 prefix = ''
                 speaker = '유민상'
 
@@ -71,13 +70,17 @@ class TrainBluePrint(Blueprint):
         f = request.files['file']
 
         # file path
-        file_name = f'{g.user["name"]}_{datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S")}.txt'
+        dir_user = os.path.join(database.path_fs, g.user['name'])
+        path_data = os.path.join(dir_user, f'data.txt')
+        path_vocab = os.path.join(dir_user, 'vocab.model')
 
         # upload to db
-        path_data = database.fs_upload(f, file_name)
+        os.makedirs(dir_user, exist_ok=True)
+        database.fs_upload(f, path_data)
 
         # update user's file path
         g.user['files']['data'] = path_data
+        g.user['files']['vocab'] = path_vocab
         user = database.update(name=g.user['name'], user=g.user)
         user = hide_credentials(user)
         
