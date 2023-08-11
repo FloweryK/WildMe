@@ -36,11 +36,9 @@ class AuthBluePrint(Blueprint):
         user = {
             'name': name,
             'password': password,
-            'files': {
-                "data": None,
-                "vocab": None,
-                "weight": None
-            }
+            'path_data': None,
+            'path_vocab': None,
+            'path_weight': None
         }
 
         # hide credentials

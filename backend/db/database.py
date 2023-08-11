@@ -28,6 +28,26 @@ def update(func):
     return wrapper
 
 
+def check_schema(user):
+    SCHEMA = [
+        "id",
+        "name",
+        "path_data",
+        "path_vocab",
+        "path_weight",
+    ]
+
+    for col_name in SCHEMA:
+        if col_name not in user:
+            raise KeyError('field not found:', col_name)
+    
+    for col_name in user:
+        if col_name not in SCHEMA:
+            raise KeyError('field not found:', col_name)
+    
+    return user
+        
+
 class Database:
     def __init__(self, path_data, path_fs):
         # make dir for fs
@@ -51,7 +71,8 @@ class Database:
     @update
     def insert(self, user):
         user['id'] = self.id_cur
-        self.data[user['id']] = user
+        self.data[user['id']] = check_schema(user)
+        
         return user
     
     @update
@@ -59,8 +80,9 @@ class Database:
         for i in self.data:
             if self.data[i]['name'] == name:
                 user['id'] = i
-                self.data[i] = user
-                return self.data[i]
+                self.data[i] = check_schema(user)
+                
+                return user
         return None
     
     def fs_upload(self, f, path):

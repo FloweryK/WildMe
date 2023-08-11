@@ -54,8 +54,8 @@ class TrainBluePrint(Blueprint):
             if self.queue:
                 user = self.queue.pop(0)
 
-                path_data = user['files']['data']
-                path_vocab = user['files']['vocab']
+                path_data = user['path_data']
+                path_vocab = user['path_vocab']
                 prefix = ''
                 speaker = '유민상'
 
@@ -71,7 +71,7 @@ class TrainBluePrint(Blueprint):
 
         # file path
         dir_user = os.path.join(database.path_fs, g.user['name'])
-        path_data = os.path.join(dir_user, f'data.txt')
+        path_data = os.path.join(dir_user, 'data.txt')
         path_vocab = os.path.join(dir_user, 'vocab.model')
 
         # upload to db
@@ -79,8 +79,8 @@ class TrainBluePrint(Blueprint):
         database.fs_upload(f, path_data)
 
         # update user's file path
-        g.user['files']['data'] = path_data
-        g.user['files']['vocab'] = path_vocab
+        g.user['path_data'] = path_data
+        g.user['path_vocab'] = path_vocab
         user = database.update(name=g.user['name'], user=g.user)
         user = hide_credentials(user)
         
@@ -88,6 +88,7 @@ class TrainBluePrint(Blueprint):
     
     @login_required
     def reserve(self):
+        # get user
         user = g.user
 
         if user['name'] in [u['name'] for u in self.queue]:
