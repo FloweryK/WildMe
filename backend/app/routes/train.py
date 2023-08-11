@@ -1,4 +1,5 @@
 import os
+import time
 import datetime
 import threading
 import torch
@@ -32,17 +33,36 @@ class WarmupScheduler(_LRScheduler):
         return [lr for _ in self.base_lrs]
 
 
-def get_model_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-
 class TrainBluePrint(Blueprint):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # queue
+        self.queue = []
+
         # add url rules
         self.add_url_rule('/upload', 'upload', self.upload, methods=['POST'])
-        self.add_url_rule('/train', 'train', self.run_training, methods=['POST'])
+        self.add_url_rule('/reserve', 'reserve', self.reserve, methods=['POST'])
+
+        # thread job
+        t = threading.Thread(target=self.thread_job)
+        t.start()
+    
+    def thread_job(self):
+        while True:
+            time.sleep(1)
+
+            if self.queue:
+                user = self.queue.pop(0)
+
+                path_data = user['files']['data']
+                path_vocab = 'testvocab.model'
+                prefix = ''
+                speaker = '유민상'
+
+                self.train(config, path_data, path_vocab, prefix, speaker)
+            else:
+                print('nothing in queue')
     
     @staticmethod
     @login_required
@@ -64,20 +84,14 @@ class TrainBluePrint(Blueprint):
         return jsonify(user), CREATED
     
     @login_required
-    def run_training(self):
+    def reserve(self):
         user = g.user
 
-        # arguments
-        path_data = user['files']['data']
-        path_vocab = 'testvocab.model'
-        prefix = ''
-        speaker = '유민상'
-
-        # threading
-        t = threading.Thread(target=self.train, args=(config, path_data, path_vocab, prefix, speaker))
-        t.start()
-
-        return {"message": "train started"}, OK
+        if user['name'] in [u['name'] for u in self.queue]:
+            return {"message": "Already in queue"}, CONFLICT
+        else:
+            self.queue.append(g.user)
+            return {"message": "train started"}, OK
     
     def train(self, config, path_data, path_vocab, prefix, speaker):
         # dataset
@@ -92,7 +106,6 @@ class TrainBluePrint(Blueprint):
         # model
         model = Classifier(config)
         model = model.to(config.device)
-        print("model parameters:", get_model_parameters(model))
 
         # criterion, optimizer and scheduler
         criterion = torch.nn.CrossEntropyLoss(ignore_index=PAD, label_smoothing=config.label_smoothing)
