@@ -28,19 +28,46 @@ def upload():
 
     # update user's file path
     g.user['files']['data'] = path_data
-    result = hide_credentials(database.update(name=g.user['name'], user=g.user))
+    user = database.update(name=g.user['name'], user=g.user)
+    user = hide_credentials(user)
     
-    return jsonify(result), CREATED
+    return jsonify(user), CREATED
+
+
+@bot_bp.route('/preprocess', methods=["POST"])
+@login_required
+def preprocess():
+    # TODO: preprocess logic
+    user = g.user
+
+    # update user's file path
+    user['files']['vocab'] = 'db/files/flowerk_vocab.model'
+    user = database.update(name=user['name'], user=user)
+    user = hide_credentials(user)
+
+    return jsonify(user), CREATED
+
+
+@bot_bp.route('/train', methods=["POST"])
+@login_required
+def train():
+    # TODO: train logic
+    user = g.user
+
+    # update user's file path
+    user['files']['weight'] = 'db/files/flowerk_weight.pt'
+    user = database.update(name=user['name'], user=user)
+    user = hide_credentials(user)
+
+    return jsonify(user), CREATED
 
 
 @bot_bp.route('/load', methods=["POST"])
 @login_required
 def load():
     # load chatbot
-    # path_vocab = g.user['files']['vocab']
-    # path_weight = g.user['files']['weight']
-    path_vocab = 'db/files/flowerk_vocab.model'
-    path_weight = 'db/files/flowerk_weight.pt'
+    path_vocab = g.user['files']['vocab']
+    path_weight = g.user['files']['weight']
     chatbot.load(path_vocab, path_weight)
 
     return {"message": "Model loaded"}, OK
