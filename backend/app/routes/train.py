@@ -3,18 +3,13 @@ from flask import Blueprint, g, request, jsonify
 from app.utils import login_required, hide_credentials
 from app.status_code import *
 from db.database import database
-from chatbot.chatbot import Chatbot
 from chatbot import config
 
 
-bot_bp = Blueprint('bot', __name__)
+train_bp = Blueprint('train', __name__)
 
 
-# define chatbot
-chatbot = Chatbot(config)
-
-
-@bot_bp.route('/upload', methods=["POST"])
+@train_bp.route('/upload', methods=["POST"])
 @login_required
 def upload():
     # extract txt file
@@ -34,7 +29,7 @@ def upload():
     return jsonify(user), CREATED
 
 
-@bot_bp.route('/preprocess', methods=["POST"])
+@train_bp.route('/preprocess', methods=["POST"])
 @login_required
 def preprocess():
     # TODO: preprocess logic
@@ -48,7 +43,7 @@ def preprocess():
     return jsonify(user), CREATED
 
 
-@bot_bp.route('/train', methods=["POST"])
+@train_bp.route('/train', methods=["POST"])
 @login_required
 def train():
     # TODO: train logic
@@ -60,26 +55,3 @@ def train():
     user = hide_credentials(user)
 
     return jsonify(user), CREATED
-
-
-@bot_bp.route('/load', methods=["POST"])
-@login_required
-def load():
-    # load chatbot
-    path_vocab = g.user['files']['vocab']
-    path_weight = g.user['files']['weight']
-    chatbot.load(path_vocab, path_weight)
-
-    return {"message": "Model loaded"}, OK
-
-
-@bot_bp.route('/chat', methods=["POST"])
-@login_required
-def chat():
-    data = request.json
-    text = str(data['text'])
-
-    question, question_decode, answer, answer_decode = chatbot.chat(text)
-
-    return {"message": answer_decode}, OK
-
