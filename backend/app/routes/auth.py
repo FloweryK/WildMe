@@ -38,7 +38,8 @@ class AuthBluePrint(Blueprint):
             'password': password,
             'path_data': None,
             'path_vocab': None,
-            'path_weight': None
+            'path_weight': None,
+            'speaker': None
         }
 
         # hide credentials

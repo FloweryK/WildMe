@@ -32,9 +32,11 @@ def check_schema(user):
     SCHEMA = [
         "id",
         "name",
+        "password",
         "path_data",
         "path_vocab",
         "path_weight",
+        "speaker",
     ]
 
     for col_name in SCHEMA:

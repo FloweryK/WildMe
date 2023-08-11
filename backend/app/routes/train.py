@@ -56,8 +56,8 @@ class TrainBluePrint(Blueprint):
 
                 path_data = user['path_data']
                 path_vocab = user['path_vocab']
+                speaker = user['speaker']
                 prefix = ''
-                speaker = '유민상'
 
                 self.train(config, path_data, path_vocab, prefix, speaker)
             else:
@@ -88,13 +88,17 @@ class TrainBluePrint(Blueprint):
     
     @login_required
     def reserve(self):
-        # get user
-        user = g.user
+        # extract data
+        data = request.json
+
+        # get user and add speaker
+        user = hide_credentials(g.user)
+        user['speaker'] = data['speaker']
 
         if user['name'] in [u['name'] for u in self.queue]:
             return {"message": "Already in queue"}, CONFLICT
         else:
-            self.queue.append(g.user)
+            self.queue.append(user)
             return {"message": "train started"}, OK
     
     def train(self, config, path_data, path_vocab, prefix, speaker):
