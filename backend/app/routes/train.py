@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import threading
 import torch
 from flask import Blueprint, g, request, jsonify
@@ -40,7 +41,6 @@ class TrainBluePrint(Blueprint):
         self.queue = []
 
         # add url rules
-        self.add_url_rule('/upload', 'upload', self.upload, methods=['POST'])
         self.add_url_rule('/reserve', 'reserve', self.reserve, methods=['POST'])
 
         # thread job
@@ -63,43 +63,39 @@ class TrainBluePrint(Blueprint):
             else:
                 print('nothing in queue')
     
-    @staticmethod
     @login_required
-    def upload():
-        # extract txt file
+    def reserve(self):
+        # user
+        user = g.user
+
+        # extract data
+        data = request.form
         f = request.files['file']
 
+        # check if the user is already in the queue
+        if user['name'] in [u['name'] for u in self.queue]:
+            return {"message": "Already in queue"}, CONFLICT
+
         # file path
-        dir_user = os.path.join(database.path_fs, g.user['name'])
+        dir_user = os.path.join(database.path_fs, user['name'])
         path_data = os.path.join(dir_user, 'data.txt')
         path_vocab = os.path.join(dir_user, 'vocab.model')
+        
+        # update user's speaker
+        user['path_data'] = path_data
+        user['path_vocab'] = path_vocab
+        user['speaker'] = data['speaker']
+        user = database.update(user['name'], user)
+        user = hide_credentials(user)
 
         # upload to db
         os.makedirs(dir_user, exist_ok=True)
         database.fs_upload(f, path_data)
 
-        # update user's file path
-        g.user['path_data'] = path_data
-        g.user['path_vocab'] = path_vocab
-        user = database.update(name=g.user['name'], user=g.user)
-        user = hide_credentials(user)
-        
-        return jsonify(user), CREATED
-    
-    @login_required
-    def reserve(self):
-        # extract data
-        data = request.json
+        # add to the queue
+        self.queue.append(user)
 
-        # get user and add speaker
-        user = hide_credentials(g.user)
-        user['speaker'] = data['speaker']
-
-        if user['name'] in [u['name'] for u in self.queue]:
-            return {"message": "Already in queue"}, CONFLICT
-        else:
-            self.queue.append(user)
-            return {"message": "train started"}, OK
+        return jsonify(user), OK
     
     def train(self, config, path_data, path_vocab, prefix, speaker):
         # dataset
