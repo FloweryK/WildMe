@@ -33,19 +33,16 @@ class AuthBluePrint(Blueprint):
         password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         # insert user
-        user = {
+        user = database.insert({
             'name': name,
             'password': password,
             'path_data': None,
             'path_vocab': None,
             'path_weight': None,
             'speaker': None
-        }
+        })
 
-        # hide credentials
-        result = hide_credentials(database.insert(user))
-
-        return jsonify(result), CREATED
+        return jsonify(hide_credentials(user)), CREATED
 
     @staticmethod
     def on_signin():
