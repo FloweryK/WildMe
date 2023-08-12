@@ -1,7 +1,7 @@
 import os
 import datetime
 from flask import Blueprint, g, request, jsonify
-from app.utils import login_required, hide_credentials
+from app.utils import login_required
 from app.status_code import *
 from db.database import database
 
@@ -18,10 +18,8 @@ class TrainBluePrint(Blueprint):
         # user
         user = g.user
 
-        # extract speaker
+        # extract data
         speaker = request.form['speaker']
-
-        # extract file
         f = request.files['file']
 
         # file path
@@ -38,7 +36,6 @@ class TrainBluePrint(Blueprint):
         user['reserve_timestamp'] = datetime.datetime.now().timestamp()
         user['reserve_status'] = 'reserved'
         user = database.update(user['name'], user)
-        user = hide_credentials(user)
 
         # upload to db
         os.makedirs(dir_user, exist_ok=True)

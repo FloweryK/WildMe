@@ -2,7 +2,6 @@ import datetime
 import jwt
 import bcrypt
 from flask import Blueprint, request, jsonify, current_app
-from app.utils import hide_credentials
 from app.status_code import *
 from db.database import database
 
@@ -17,9 +16,8 @@ class AuthBluePrint(Blueprint):
     @staticmethod
     def on_signup():
         # extract data
-        data = request.json
-        name = str(data['name'])
-        password = str(data['password'])
+        name = str(request.json['name'])
+        password = str(request.json['password'])
 
         # check if name or password is empty
         if not name or not password:
@@ -36,40 +34,35 @@ class AuthBluePrint(Blueprint):
         user = database.insert({
             'name': name,
             'password': password,
-            'path_data': None,
-            'path_vocab': None,
-            'path_weight': None,
-            'speaker': None,
-            'reserve_timestamp': None,
-            'reserve_status': None,
         })
 
-        return jsonify(hide_credentials(user)), CREATED
+        return jsonify(user), CREATED
 
     @staticmethod
     def on_signin():
         # extract data
-        data = request.json
-        name = data['name']
-        password = data['password']
+        name = str(request.json['name'])
+        password = str(request.json['password'])
 
         # get user data
         user = database.select(name)
 
+        # check if the user exists
         if not user:
             return {'message': 'No user found'}, NOT_FOUND
-        elif not bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
+    
+        # check if the pass is valid
+        if not bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
             return {'message': 'Invalid password'}, UNAUTHORIZED
-        else:
-            # create payload
-            payload = {
-                'id': user['id'],
-                'name': user['name'],
-                'expire_timestamp': (datetime.datetime.now() + datetime.timedelta(seconds=60*60*24)).timestamp()
-            }
+        
+        # create payload
+        payload = {
+            'id': user['id'],
+            'name': user['name'],
+            'expire_timestamp': (datetime.datetime.now() + datetime.timedelta(seconds=60*60*24)).timestamp()
+        }
 
-            # create access token
-            access_token = jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], 'HS256')
-            result = {'Authorization': access_token}
+        # create access token
+        access_token = jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], 'HS256')
 
-            return jsonify(result), OK
+        return {'Authorization': access_token}, OK

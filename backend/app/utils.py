@@ -36,8 +36,3 @@ def login_required(func):
         return func(*args, **kwargs)
     
     return decorated_function
-
-
-def hide_credentials(user):
-    CREDENTIALS = ['password']
-    return {key: value for key, value in user.items() if key not in CREDENTIALS}

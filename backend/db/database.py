@@ -1,6 +1,5 @@
 import os
 import json
-from .schema import SCHEMA
 
 
 def update(func):
@@ -11,8 +10,6 @@ def update(func):
         if os.path.exists(self.path_data):
             with open(self.path_data, 'r') as f:
                 self.data = json.load(f)
-        else:
-            self.initialize()
 
         # update id_cur
         self.id_cur = max([-1] + [int(i) for i in self.data]) + 1
@@ -29,18 +26,32 @@ def update(func):
     return wrapper
 
 
-def check_schema(user):
-    for col_name in SCHEMA:
-        if col_name not in user:
-            raise KeyError('field not found:', col_name)
+def check_and_fill(user):
+    SCHEMA = [
+        "id",
+        "name",
+        "password",
+        "path_data",
+        "path_vocab",
+        "path_weight",
+        "speaker",
+        "reserve_timestamp",
+        "reserve_status"
+    ]
+
+    # check invalid columns
+    for col in user:
+        if col not in SCHEMA:
+            raise KeyError(f"Invalid column: {col}")
     
-    for col_name in user:
-        if col_name not in SCHEMA:
-            raise KeyError('field not found:', col_name)
+    # check null columns
+    for col in SCHEMA:
+        if col not in user:
+            user[col] = None
     
     return user
-        
 
+        
 class Database:
     def __init__(self, path_data, path_fs):
         # make dir for fs
@@ -48,38 +59,38 @@ class Database:
 
         self.path_data = path_data
         self.path_fs = path_fs
-        self.initialize()
-        
-    def initialize(self):
         self.data = {}
         self.id_cur = 0
+
+    @update
+    def insert(self, user):
+        user = check_and_fill(user)
+        user['id'] = self.id_cur
+
+        # put into data
+        self.data[user['id']] = user
+        
+        return user
+    
+    @update
+    def select(self, name):
+        for i in self.data:
+            if self.data[i]['name'] == name:
+                return self.data[i]
+            
+        return None
     
     @update
     def select_all(self):
         return self.data.values()
 
     @update
-    def select(self, name):
-        for user in self.data.values():
-            if user['name'] == name:
-                return user
-        return None
-    
-    @update
-    def insert(self, user):
-        user['id'] = self.id_cur
-        self.data[user['id']] = check_schema(user)
-        
-        return user
-    
-    @update
     def update(self, name, user):
         for i in self.data:
             if self.data[i]['name'] == name:
-                user['id'] = i
-                self.data[i] = check_schema(user)
-                
-                return user
+                self.data[i] = check_and_fill(user)
+                return self.data[i]
+        
         return None
     
     def fs_upload(self, f, path):
