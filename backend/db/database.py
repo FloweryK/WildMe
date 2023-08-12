@@ -1,5 +1,6 @@
 import os
 import json
+from .schema import SCHEMA
 
 
 def update(func):
@@ -29,16 +30,6 @@ def update(func):
 
 
 def check_schema(user):
-    SCHEMA = [
-        "id",
-        "name",
-        "password",
-        "path_data",
-        "path_vocab",
-        "path_weight",
-        "speaker",
-    ]
-
     for col_name in SCHEMA:
         if col_name not in user:
             raise KeyError('field not found:', col_name)
@@ -62,6 +53,10 @@ class Database:
     def initialize(self):
         self.data = {}
         self.id_cur = 0
+    
+    @update
+    def select_all(self):
+        return self.data.values()
 
     @update
     def select(self, name):

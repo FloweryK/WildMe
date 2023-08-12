@@ -39,7 +39,9 @@ class AuthBluePrint(Blueprint):
             'path_data': None,
             'path_vocab': None,
             'path_weight': None,
-            'speaker': None
+            'speaker': None,
+            'reserve_timestamp': None,
+            'reserve_status': None,
         })
 
         return jsonify(hide_credentials(user)), CREATED
