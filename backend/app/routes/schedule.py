@@ -1,9 +1,9 @@
 import os
 import datetime
 from flask import Blueprint, g, request, jsonify
+from app.constants.status_code import *
+from app.decorator import login_required
 from db.database import database
-from ..constants.status_code import *
-from ..decorator import login_required
 
 
 class ScheduleBluePrint(Blueprint):

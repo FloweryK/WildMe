@@ -3,13 +3,13 @@ import time
 import torch
 from torch.utils.data import DataLoader, random_split
 from torch.utils.tensorboard import SummaryWriter
+from chatbot.constants.custom_tokens import *
+from chatbot.dataset.base import collate_fn
+from chatbot.dataset.kakaotalk_mobile import KakaotalkMobileDataset
+from chatbot.model.classifier import Classifier
+from chatbot.utils import WarmupScheduler
+from chatbot.trainer import Trainer
 from db.database import database
-from .constants.custom_tokens import *
-from .dataset.base import collate_fn
-from .dataset.kakaotalk_mobile import KakaotalkMobileDataset
-from .model.classifier import Classifier
-from .utils import WarmupScheduler
-from .trainer import Trainer
 
 
 class Checker:

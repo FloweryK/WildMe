@@ -1,6 +1,6 @@
 import os
-from .decorator import update
-from .utils import check_and_fill
+from db.decorator import update
+from db.utils import check_and_fill
 
         
 class Database:

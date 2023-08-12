@@ -1,8 +1,8 @@
 from flask import Blueprint, g, request
+from app.constants.status_code import *
+from app.decorator import login_required
 from chatbot import config
 from chatbot.chatbot import Chatbot
-from ..constants.status_code import *
-from ..decorator import login_required
 
 
 class InferenceBluePrint(Blueprint):

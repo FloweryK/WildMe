@@ -1,7 +1,7 @@
 import numpy as np
 from collections import Counter
 from torch.optim.lr_scheduler import _LRScheduler
-from .constants.custom_tokens import *
+from chatbot.constants.custom_tokens import *
 
 
 def get_bleu(reference, candidate, N=4):

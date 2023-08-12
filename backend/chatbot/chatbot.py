@@ -1,7 +1,7 @@
 import torch
 import sentencepiece as spm
-from .constants.custom_tokens import *
-from .model.classifier import Classifier
+from chatbot.constants.custom_tokens import *
+from chatbot.model.classifier import Classifier
 
 
 class Chatbot:

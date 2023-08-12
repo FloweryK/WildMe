@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from contextlib import nullcontext
-from .utils import get_bleu
+from chatbot.utils import get_bleu
 
 
 class Trainer:

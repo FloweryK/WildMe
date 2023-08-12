@@ -2,8 +2,8 @@ import datetime
 import jwt
 import bcrypt
 from flask import Blueprint, request, jsonify, current_app
+from app.constants.status_code import *
 from db.database import database
-from ..constants.status_code import *
 
 
 class AuthBluePrint(Blueprint):
