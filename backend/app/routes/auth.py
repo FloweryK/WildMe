@@ -10,11 +10,11 @@ class AuthBluePrint(Blueprint):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.add_url_rule('/signup', 'signup', self.on_signup, methods=['POST'])
-        self.add_url_rule('/signin', 'signin', self.on_signin, methods=['POST'])
+        self.add_url_rule('/signup', 'signup', self.signup, methods=['POST'])
+        self.add_url_rule('/signin', 'signin', self.signin, methods=['POST'])
     
     @staticmethod
-    def on_signup():
+    def signup():
         # extract data
         name = str(request.json['name'])
         password = str(request.json['password'])
@@ -39,7 +39,7 @@ class AuthBluePrint(Blueprint):
         return jsonify(user), CREATED
 
     @staticmethod
-    def on_signin():
+    def signin():
         # extract data
         name = str(request.json['name'])
         password = str(request.json['password'])
