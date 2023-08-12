@@ -1,6 +1,5 @@
 import torch
 import sentencepiece as spm
-from . import config
 from .constants.custom_tokens import *
 from .model.classifier import Classifier
 
@@ -19,7 +18,7 @@ class Chatbot:
     
     def load(self, path_vocab, path_weight):
         self.vocab.load(path_vocab)
-        self.model.load_state_dict(torch.load(path_weight, map_location=config.device))
+        self.model.load_state_dict(torch.load(path_weight, map_location=self.config.device))
         self.model.eval()
     
     def chat(self, text, n_max=50):

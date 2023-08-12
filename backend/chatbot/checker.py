@@ -3,7 +3,6 @@ import time
 import torch
 from torch.utils.data import DataLoader, random_split
 from torch.utils.tensorboard import SummaryWriter
-from pprint import pprint
 from db.database import database
 from .constants.custom_tokens import *
 from .dataset.base import collate_fn
