@@ -36,13 +36,14 @@ def get_bleu(reference, candidate, N=4):
 
 
 class Trainer:
-    def __init__(self, model, criterion, scaler, optimizer, scheduler, writer):
+    def __init__(self, model, criterion, scaler, optimizer, scheduler, writer, path_weight):
         self.model = model
         self.criterion = criterion
         self.scaler = scaler
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.writer = writer
+        self.path_weight = path_weight
     
     def run_epoch(self, epoch, dataloader, device, train=True, use_amp=False, n_accum=1):
         losses = []
@@ -109,8 +110,8 @@ class Trainer:
                 pbar.set_postfix_str(f"Loss: {losses[-1]:.2f} ({np.mean(losses):.2f}) | lr: {self.scheduler.get_last_lr()[0]:.2e} | bleu: {np.mean(bleus):.1f} | {memory:.2f}GB | {np.mean(times) * 1000:.0f}ms")
 
             # save model
-            if train and ((epoch + 1) % 5 == 0):
-                torch.save(self.model.state_dict(), f'weights/model_{epoch}.pt')
+            if train:
+                torch.save(self.model.state_dict(), self.path_weight)
             
             # tensorboard
             self.writer.add_scalar(f'Train/Loss' if train else 'Test/Loss', np.mean(losses), epoch)

@@ -40,6 +40,9 @@ class TrainBluePrint(Blueprint):
         # queue
         self.queue = []
 
+        # ongoing
+        self.ongoing = []
+
         # add url rules
         self.add_url_rule('/reserve', 'reserve', self.reserve, methods=['POST'])
 
@@ -51,15 +54,18 @@ class TrainBluePrint(Blueprint):
         while True:
             time.sleep(1)
 
-            if self.queue:
+            if self.queue and (not self.ongoing):
+                # move the first user to ongoing
                 user = self.queue.pop(0)
+                self.ongoing.append(user)
 
                 path_data = user['path_data']
                 path_vocab = user['path_vocab']
+                path_weight = user['path_weight']
                 speaker = user['speaker']
                 prefix = ''
 
-                self.train(config, path_data, path_vocab, prefix, speaker)
+                self.train(config, path_data, path_vocab, path_weight, prefix, speaker)
             else:
                 print('nothing in queue')
     
@@ -80,10 +86,12 @@ class TrainBluePrint(Blueprint):
         dir_user = os.path.join(database.path_fs, user['name'])
         path_data = os.path.join(dir_user, 'data.txt')
         path_vocab = os.path.join(dir_user, 'vocab.model')
+        path_weight = os.path.join(dir_user, 'model.pt')
         
         # update user's speaker
         user['path_data'] = path_data
         user['path_vocab'] = path_vocab
+        user['path_weight'] = path_weight
         user['speaker'] = data['speaker']
         user = database.update(user['name'], user)
         user = hide_credentials(user)
@@ -97,7 +105,7 @@ class TrainBluePrint(Blueprint):
 
         return jsonify(user), OK
     
-    def train(self, config, path_data, path_vocab, prefix, speaker):
+    def train(self, config, path_data, path_vocab, path_weight, prefix, speaker):
         # dataset
         dataset = KakaotalkMobileDataset(config.n_vocab, path_data, path_vocab, speaker)
         train_size = int(config.r_split * len(dataset))
@@ -124,9 +132,12 @@ class TrainBluePrint(Blueprint):
         writer = SummaryWriter(log_dir=f'runs/{prefix}/vocab={config.n_vocab}_batch={config.n_batch}_accum={config.n_accum}_amp={config.use_amp}_warmup={config.warmup_steps}_demb={config.d_emb}')
 
         # trainer
-        trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer)
+        trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer, path_weight)
 
         # train
         for epoch in range(config.n_epoch):
             trainer.run_epoch(epoch, trainloader, device=config.device, train=True, use_amp=config.use_amp, n_accum=config.n_accum)
             trainer.run_epoch(epoch, testloader, device=config.device, train=False, use_amp=config.use_amp, n_accum=config.n_accum)
+        
+        # clear self.ongoing
+        self.ongoing = []
