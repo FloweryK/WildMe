@@ -6,7 +6,7 @@ from app.status_code import *
 from db.database import database
 
 
-class TrainBluePrint(Blueprint):
+class ScheduleBluePrint(Blueprint):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
