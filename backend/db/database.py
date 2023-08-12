@@ -4,7 +4,7 @@ from .utils import check_and_fill
 
         
 class Database:
-    def __init__(self, path_data, path_fs):
+    def __init__(self, path_fs, path_data):
         # make dir for fs
         os.makedirs(path_fs, exist_ok=True)
 
@@ -48,4 +48,4 @@ class Database:
         f.save(path)
 
 
-database = Database(path_data='db/data.json', path_fs='db/files')
+database = Database(path_fs='db/files', path_data='db/files/data.json')
