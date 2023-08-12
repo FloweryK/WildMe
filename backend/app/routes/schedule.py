@@ -12,6 +12,7 @@ class ScheduleBluePrint(Blueprint):
 
         # add url rules
         self.add_url_rule('/reserve', 'reserve', self.reserve, methods=['POST'])
+        self.add_url_rule('/read', 'read', self.read, methods=['POST'])
     
     @login_required
     def reserve(self):
@@ -43,3 +44,7 @@ class ScheduleBluePrint(Blueprint):
 
         return jsonify(user), OK
     
+    @login_required
+    def read(self):
+        schedule = database.select_all()
+        return jsonify(schedule), OK
