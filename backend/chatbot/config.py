@@ -13,8 +13,8 @@ assert d_emb % n_head == 0
 r_split = 0.9
 
 # training
-device = 'cpu'
-use_amp = False
+device = 'cuda'
+use_amp = True
 n_epoch = 50
 n_batch = 32
 n_accum = 1
