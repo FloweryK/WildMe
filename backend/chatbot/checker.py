@@ -40,17 +40,22 @@ class Checker:
             database.update(user['name'], user)
 
             # run training
-            self.train(
-                path_data=user['path_data'],
-                path_vocab=user['path_vocab'],
-                path_weight=user['path_weight'],
-                prefix=user['name']
-            )
+            try:
+                self.train(
+                    path_data=user['path_data'],
+                    path_vocab=user['path_vocab'],
+                    path_weight=user['path_weight'],
+                    prefix=user['name']
+                )
 
-            # update user's reserved_status
-            user['reserve_status'] = 'done'
-            database.update(user['name'], user)
-            
+                # update user's reserve_status
+                user['reserve_status'] = 'done'
+                database.update(user['name'], user)
+            except:
+                # update user's reserve_status 
+                user['reserve_status'] = 'failed'
+                database.update(user['name'], user)
+
 
     def train(self, path_data, path_vocab, path_weight, prefix):
         # dataset
