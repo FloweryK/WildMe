@@ -5,6 +5,7 @@ def check_and_fill(user):
         "password",
         "path_data",
         "path_vocab",
+        "path_config",
         "path_weight",
         "speaker",
         "reserve_timestamp",

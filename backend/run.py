@@ -7,7 +7,6 @@ from app.routes.home import HomeBluePrint
 from app.routes.auth import AuthBluePrint
 from app.routes.schedule import ScheduleBluePrint
 from app.routes.inference import InferenceBluePrint
-from chatbot import config
 from chatbot.checker import Checker
 
 
@@ -36,5 +35,5 @@ if __name__ == '__main__':
     t.start()
     
     # run checker
-    checker = Checker(config)
+    checker = Checker()
     checker.run()

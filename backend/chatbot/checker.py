@@ -8,14 +8,12 @@ from chatbot.dataset.base import collate_fn
 from chatbot.dataset.kakaotalk_mobile import KakaotalkMobileDataset
 from chatbot.model.classifier import Classifier
 from chatbot.utils import WarmupScheduler
+from chatbot.config import Config
 from chatbot.trainer import Trainer
 from db.database import database
 
 
 class Checker:
-    def __init__(self, config):
-        self.config = config
-    
     def run(self):
         while True:
             time.sleep(1)
@@ -44,6 +42,7 @@ class Checker:
                 self.train(
                     path_data=user['path_data'],
                     path_vocab=user['path_vocab'],
+                    path_config=user['path_config'],
                     path_weight=user['path_weight'],
                     prefix=user['name']
                 )
@@ -57,36 +56,39 @@ class Checker:
                 database.update(user['name'], user)
 
 
-    def train(self, path_data, path_vocab, path_weight, prefix):
+    def train(self, path_data, path_config, path_vocab, path_weight, prefix):
+        # load config
+        config = Config(path_config)
+
         # dataset
-        dataset = KakaotalkMobileDataset(self.config.n_vocab, path_data, path_vocab, speaker='유민상')
-        train_size = int(self.config.r_split * len(dataset))
+        dataset = KakaotalkMobileDataset(config.n_vocab, path_data, path_vocab, speaker='유민상')
+        train_size = int(config.r_split * len(dataset))
         trainset, testset = random_split(dataset, [train_size, len(dataset) - train_size])
 
         # dataloader
-        trainloader = DataLoader(trainset, batch_size=self.config.n_batch, shuffle=True, collate_fn=collate_fn)
-        testloader = DataLoader(testset, batch_size=self.config.n_batch, shuffle=True, collate_fn=collate_fn)
+        trainloader = DataLoader(trainset, batch_size=config.n_batch, shuffle=True, collate_fn=collate_fn)
+        testloader = DataLoader(testset, batch_size=config.n_batch, shuffle=True, collate_fn=collate_fn)
 
         # model
-        model = Classifier(self.config)
-        model = model.to(self.config.device)
+        model = Classifier(config)
+        model = model.to(config.device)
 
         # criterion, optimizer and scheduler
-        criterion = torch.nn.CrossEntropyLoss(ignore_index=PAD, label_smoothing=self.config.label_smoothing)
-        optimizer = torch.optim.Adam(model.parameters(), lr=self.config.lr, betas=(0.9, 0.98), eps=1e-9)
-        scheduler = WarmupScheduler(optimizer, warmup_steps=self.config.warmup_steps, d_model=self.config.d_emb)
+        criterion = torch.nn.CrossEntropyLoss(ignore_index=PAD, label_smoothing=config.label_smoothing)
+        optimizer = torch.optim.Adam(model.parameters(), lr=config.lr, betas=(0.9, 0.98), eps=1e-9)
+        scheduler = WarmupScheduler(optimizer, warmup_steps=config.warmup_steps, d_model=config.d_emb)
 
         # scaler
-        scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp)
+        scaler = torch.cuda.amp.GradScaler(enabled=config.use_amp)
 
         # writer
         os.makedirs(f'runs/{prefix}', exist_ok=True)
-        writer = SummaryWriter(log_dir=f'runs/{prefix}/vocab={self.config.n_vocab}_batch={self.config.n_batch}_accum={self.config.n_accum}_amp={self.config.use_amp}_warmup={self.config.warmup_steps}_demb={self.config.d_emb}')
+        writer = SummaryWriter(log_dir=f'runs/{prefix}/vocab={config.n_vocab}_batch={config.n_batch}_accum={config.n_accum}_amp={config.use_amp}_warmup={config.warmup_steps}_demb={config.d_emb}')
 
         # trainer
         trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer, path_weight)
 
         # train
-        for epoch in range(self.config.n_epoch):
-            trainer.run_epoch(epoch, trainloader, device=self.config.device, train=True, use_amp=self.config.use_amp, n_accum=self.config.n_accum)
-            trainer.run_epoch(epoch, testloader, device=self.config.device, train=False, use_amp=self.config.use_amp, n_accum=self.config.n_accum)
+        for epoch in range(config.n_epoch):
+            trainer.run_epoch(epoch, trainloader, device=config.device, train=True, use_amp=config.use_amp, n_accum=config.n_accum)
+            trainer.run_epoch(epoch, testloader, device=config.device, train=False, use_amp=config.use_amp, n_accum=config.n_accum)

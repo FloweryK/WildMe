@@ -1,4 +1,5 @@
 import os
+import json
 import datetime
 from flask import Blueprint, g, request, jsonify
 from app.constants.status_code import *
@@ -23,15 +24,38 @@ class ScheduleBluePrint(Blueprint):
         speaker = request.form['speaker']
         f = request.files['file']
 
+        # extract config
+        config = {
+            "n_vocab" :         int(request.form['n_vocab']),
+            "n_seq" :           int(request.form['n_seq']),
+            "n_layer" :         int(request.form['n_layer']),
+            "n_head" :          int(request.form['n_head']),
+            "d_emb" :           int(request.form['d_emb']),
+            "d_hidden" :        int(request.form['d_hidden']),
+            "dropout" :         float(request.form['dropout']),
+            "scale" :           float(request.form['scale']),
+            "r_split" :         float(request.form['r_split']),
+            "device" :          str(request.form['device']),
+            "use_amp" :         bool(request.form['use_amp'] == 'True'),
+            "n_epoch" :         int(request.form['n_epoch']),
+            "n_batch" :         int(request.form['n_batch']),
+            "n_accum" :         int(request.form['n_accum']),
+            "lr" :              float(request.form['lr']),
+            "warmup_steps" :    int(request.form['warmup_steps']),
+            "label_smoothing" : float(request.form['label_smoothing']),
+        }
+
         # file path
         dir_user = os.path.join(database.path_fs, user['name'])
         path_data = os.path.join(dir_user, 'data.txt')
         path_vocab = os.path.join(dir_user, 'vocab.model')
+        path_config = os.path.join(dir_user, 'config.json')
         path_weight = os.path.join(dir_user, 'model.pt')
         
         # update user
         user['path_data'] = path_data
         user['path_vocab'] = path_vocab
+        user['path_config'] = path_config
         user['path_weight'] = path_weight
         user['speaker'] = speaker
         user['reserve_timestamp'] = datetime.datetime.now().timestamp()
@@ -41,6 +65,10 @@ class ScheduleBluePrint(Blueprint):
         # upload to db
         os.makedirs(dir_user, exist_ok=True)
         database.fs_upload(f, path_data)
+
+        # upload config as json
+        with open(path_config, 'w') as j:
+            json.dump(config, j)
 
         return jsonify(user), OK
     
