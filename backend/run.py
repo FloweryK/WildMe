@@ -1,5 +1,6 @@
 import os
 import argparse
+import threading
 from app.server import app
 from dotenv import load_dotenv
 
@@ -18,5 +19,6 @@ if __name__ == '__main__':
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 
     # run app
-    app.run(host=args.host, port=args.port)
+    t = threading.Thread(target=app.run, kwargs={'host': args.host, 'port': args.port})
+    t.start()
     
