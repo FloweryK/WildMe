@@ -1,35 +1,34 @@
 from flask import Blueprint, g, request
 from chatbot.chatbot import Chatbot
-from chatbot import config
 from ..constants.status_code import *
 from ..decorator import login_required
 
 
-inference_bp = Blueprint('inference', __name__)
+class InferenceBluePrint(Blueprint):
+    def __init__(self, config, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
+        # define chatbot
+        self.chatbot = Chatbot(config)
 
-# define chatbot
-chatbot = Chatbot(config)
+        self.add_url_rule('/load', 'load', self.load, methods=['POST'])
+        self.add_url_rule('/chat', 'chat', self.chat, methods=['POST'])
+    
+    @login_required
+    def load(self):
+        # load chatbot
+        path_vocab = g.user['path_vocab']
+        path_weight = g.user['path_weight']
+        self.chatbot.load(path_vocab, path_weight)
 
+        return {"message": "Model loaded"}, OK
+    
+    @login_required
+    def chat(self):
+        # extract data
+        text = str(request.json['text'])
 
-@inference_bp.route('/load', methods=["POST"])
-@login_required
-def load():
-    # load chatbot
-    path_vocab = g.user['files']['vocab']
-    path_weight = g.user['files']['weight']
-    chatbot.load(path_vocab, path_weight)
+        # get answer from chatbot
+        _, _, _, answer_decode = self.chatbot.chat(text)
 
-    return {"message": "Model loaded"}, OK
-
-
-@inference_bp.route('/chat', methods=["POST"])
-@login_required
-def chat():
-    data = request.json
-    text = str(data['text'])
-
-    question, question_decode, answer, answer_decode = chatbot.chat(text)
-
-    return {"message": answer_decode}, OK
-
+        return {"message": answer_decode}, OK
