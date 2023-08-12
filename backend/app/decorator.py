@@ -2,8 +2,8 @@ import datetime
 import jwt
 from functools import wraps
 from flask import request, g, current_app
-from app.status_code import *
 from db.database import database
+from .constants.status_code import *
 
 
 def login_required(func):

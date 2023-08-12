@@ -1,7 +1,7 @@
 import os
 import argparse
 import threading
-from app.server import app
+from app.app import app
 from dotenv import load_dotenv
 
 

@@ -1,8 +1,7 @@
-import argparse
 import torch
 import sentencepiece as spm
 from . import config
-from .constant import *
+from .constants.custom_tokens import *
 from .model.classifier import Classifier
 
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, g
-from app.utils import login_required
-from app.status_code import *
+from ..constants.status_code import *
+from ..decorator import login_required
 
 
 class HomeBluePrint(Blueprint):

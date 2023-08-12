@@ -2,7 +2,7 @@ import os
 import sentencepiece as spm
 import torch
 from torch.utils.data import Dataset
-from ..constant import *
+from ..constants.custom_tokens import *
 
 
 class ChatDatasetBase(Dataset):

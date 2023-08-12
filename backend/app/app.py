@@ -1,8 +1,8 @@
 from flask import Flask
-from app.routes.home import HomeBluePrint
-from app.routes.auth import AuthBluePrint
-from app.routes.schedule import ScheduleBluePrint
-from app.routes.inference import inference_bp
+from .routes.home import HomeBluePrint
+from .routes.auth import AuthBluePrint
+from .routes.schedule import ScheduleBluePrint
+from .routes.inference import inference_bp
 
 
 # app settings
