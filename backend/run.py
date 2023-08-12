@@ -2,6 +2,8 @@ import os
 import argparse
 import threading
 from app.app import app
+from chatbot.checker import Checker
+from chatbot import config
 from dotenv import load_dotenv
 
 
@@ -22,3 +24,6 @@ if __name__ == '__main__':
     t = threading.Thread(target=app.run, kwargs={'host': args.host, 'port': args.port})
     t.start()
     
+    # run checker
+    checker = Checker(config)
+    checker.run()
