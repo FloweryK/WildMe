@@ -44,7 +44,8 @@ class Checker:
                     path_vocab=user['path_vocab'],
                     path_config=user['path_config'],
                     path_weight=user['path_weight'],
-                    prefix=user['name']
+                    prefix=user['name'],
+                    speaker=user['speaker'],
                 )
 
                 # update user's reserve_status
@@ -56,12 +57,12 @@ class Checker:
                 database.update(user['name'], user)
 
 
-    def train(self, path_data, path_config, path_vocab, path_weight, prefix):
+    def train(self, path_data, path_config, path_vocab, path_weight, prefix, speaker):
         # load config
         config = Config(path_config)
 
         # dataset
-        dataset = KakaotalkMobileDataset(config.n_vocab, path_data, path_vocab, speaker='유민상')
+        dataset = KakaotalkMobileDataset(config.n_vocab, path_data, path_vocab, speaker)
         train_size = int(config.r_split * len(dataset))
         trainset, testset = random_split(dataset, [train_size, len(dataset) - train_size])
 
