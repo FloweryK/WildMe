@@ -23,3 +23,12 @@ def check_and_fill(user):
             user[col] = None
     
     return user
+
+
+def hide_credentials(user):
+    CREDENTIALS = [
+        "password",
+    ]
+
+    user = {col: value for col, value in user.items() if col not in CREDENTIALS}
+    return user

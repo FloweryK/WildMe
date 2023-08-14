@@ -1,8 +1,9 @@
 import datetime
 import jwt
 import bcrypt
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, g, jsonify, current_app
 from app.constants.status_code import *
+from app.decorator import login_required
 from db.database import database
 
 
@@ -45,7 +46,7 @@ class AuthBluePrint(Blueprint):
         password = str(request.json['password'])
 
         # get user data
-        user = database.select(name)
+        user = database.select(name, show_credentials=True)
 
         # check if the user exists
         if not user:
@@ -66,3 +67,5 @@ class AuthBluePrint(Blueprint):
         access_token = jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], 'HS256')
 
         return {'Authorization': access_token}, OK
+
+        

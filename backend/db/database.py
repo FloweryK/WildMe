@@ -1,6 +1,6 @@
 import os
 from db.decorator import update
-from db.utils import check_and_fill
+from db.utils import check_and_fill, hide_credentials
 
         
 class Database:
@@ -21,26 +21,28 @@ class Database:
         # put into data
         self.data[user['id']] = user
         
-        return user
+        return hide_credentials(user)
     
     @update
-    def select(self, name):
+    def select(self, name, show_credentials=False):
         for i in self.data:
-            if self.data[i]['name'] == name:
-                return self.data[i]
+            user = self.data[i]
+            if user['name'] == name:
+                return user if show_credentials else hide_credentials(user)
             
         return None
     
     @update
-    def select_all(self):
-        return list(self.data.values())
+    def select_all(self, show_credentials=False):
+        users = list(self.data.values())
+        return users if show_credentials else [hide_credentials(user) for user in users]
 
     @update
     def update(self, name, user):
         for i in self.data:
             if self.data[i]['name'] == name:
                 self.data[i] = check_and_fill(user)
-                return self.data[i]
+                return hide_credentials(self.data[i])
         
         return None
     
