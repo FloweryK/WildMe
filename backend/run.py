@@ -2,6 +2,7 @@ import os
 import argparse
 import threading
 from flask import Flask
+from flask_cors import CORS
 from dotenv import load_dotenv
 from app.routes.home import HomeBluePrint
 from app.routes.auth import AuthBluePrint
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     # app settings
     app = Flask(__name__)
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+    CORS(app)
 
     # blueprints
     app.register_blueprint(HomeBluePrint('home', __name__), url_prefix='/')
