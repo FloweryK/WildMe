@@ -1,6 +1,9 @@
+import io
 import os
+from cryptography.fernet import Fernet
 from db.decorator import update
 from db.utils import check_and_fill, hide_credentials
+from db.crypt import crypt
 
         
 class Database:
@@ -47,7 +50,15 @@ class Database:
         return None
     
     def fs_upload(self, f, path):
-        f.save(path)
+        with open(path, 'w') as file:
+            # flask filestroage -> python file object
+            data = io.BytesIO(f.read()).read().decode()
+
+            # encrypt
+            data_encrypted = crypt.encrypt(data)
+
+            # write encrypted data
+            file.write(data_encrypted)
 
 
 database = Database(path_fs='db/files', path_data='db/files/data.json')

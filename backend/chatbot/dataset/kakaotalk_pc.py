@@ -1,5 +1,6 @@
 import re
 from .base import ChatDatasetBase
+from db.crypt import crypt
 
 
 def is_date(line):
@@ -48,6 +49,9 @@ class KakaotalkPCDataset(ChatDatasetBase):
             
     def load_data(self, path_data):
         with open(path_data, 'r', encoding="utf8") as f:
+            # decrypt data
+            data = crypt.decrypt(f.read()).split('\n')
+            
             i_prev = None
             speaker_prev = None
 
@@ -56,7 +60,11 @@ class KakaotalkPCDataset(ChatDatasetBase):
                     continue
 
                 # extract chat
-                speaker, t, text = extract_chat(line)
+                try:
+                    speaker, t, text = extract_chat(line)
+                except IndexError:
+                    # TMP exception for passing '\n' in lines
+                    continue
 
                 if is_emoticon(text):
                     continue

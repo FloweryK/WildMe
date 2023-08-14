@@ -38,23 +38,22 @@ class Checker:
             database.update(user['name'], user)
 
             # run training
-            try:
-                self.train(
-                    path_data=user['path_data'],
-                    path_vocab=user['path_vocab'],
-                    path_config=user['path_config'],
-                    path_weight=user['path_weight'],
-                    prefix=user['name'],
-                    speaker=user['speaker'],
-                )
+            self.train(
+                path_data=user['path_data'],
+                path_vocab=user['path_vocab'],
+                path_config=user['path_config'],
+                path_weight=user['path_weight'],
+                prefix=user['name'],
+                speaker=user['speaker'],
+            )
 
-                # update user's reserve_status
-                user['reserve_status'] = 'done'
-                database.update(user['name'], user)
-            except:
-                # update user's reserve_status 
-                user['reserve_status'] = 'failed'
-                database.update(user['name'], user)
+            # update user's reserve_status
+            user['reserve_status'] = 'done'
+            database.update(user['name'], user)
+            # except:
+            #     # update user's reserve_status 
+            #     user['reserve_status'] = 'failed'
+            #     database.update(user['name'], user)
 
 
     def train(self, path_data, path_config, path_vocab, path_weight, prefix, speaker):
@@ -89,6 +88,7 @@ class Checker:
         # trainer
         trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer, path_weight)
 
+        print("dataset size:", len(dataset))
         # train
         for epoch in range(config.n_epoch):
             trainer.run_epoch(epoch, trainloader, device=config.device, train=True, use_amp=config.use_amp, n_accum=config.n_accum)
