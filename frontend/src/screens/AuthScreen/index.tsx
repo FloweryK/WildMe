@@ -17,8 +17,14 @@ const States = {
     isNameError: false,
     isPasswordError: false,
   },
-  Success: {
+  SuccessSignin: {
     toastText: "로그인 성공",
+    severity: "success",
+    isNameError: false,
+    isPasswordError: false,
+  },
+  SuccessSignup: {
+    toastText: "회원가입 성공",
     severity: "success",
     isNameError: false,
     isPasswordError: false,
@@ -69,9 +75,11 @@ export default function AuthScreen() {
     const isSignup = formdata.get("signup");
 
     if (name === undefined) {
+      // empty username
       setAuthState(States.InvalidUser);
       setOpenToast(true);
     } else if (password === undefined) {
+      // empty password
       setAuthState(States.InvalidPassword);
       setOpenToast(true);
     } else {
@@ -83,11 +91,14 @@ export default function AuthScreen() {
       if (isSignup) {
         signUp(data)
           .then((response) => {
-            console.log(response);
+            // username already exists
+            setAuthState(States.SuccessSignup);
+            setOpenToast(true);
           })
           .catch((error) => {
             console.error(error);
             if (error.response.status === 409) {
+              // username already exists
               setAuthState(States.DuplicatedUser);
               setOpenToast(true);
             }
@@ -95,15 +106,18 @@ export default function AuthScreen() {
       } else {
         signIn(data)
           .then((response) => {
-            setAuthState(States.Success);
+            // login successful
+            setAuthState(States.SuccessSignin);
             setOpenToast(true);
           })
           .catch((error) => {
             console.error(error);
             if (error.response.status === 404) {
+              // username not exist
               setAuthState(States.InvalidUser);
               setOpenToast(true);
             } else if (error.response.status === 401) {
+              // invalid password
               setAuthState(States.InvalidPassword);
               setOpenToast(true);
             }
