@@ -1,3 +1,4 @@
+import os
 import sentencepiece as spm
 import torch
 from torch.utils.data import Dataset
@@ -50,6 +51,10 @@ class ChatDatasetBase(Dataset):
             eos_piece='[EOS]',
             user_defined_symbols=['[SEP]', '[CLS]', '[MASK]']
         )
+
+        # delete unnecessary files
+        os.remove(path_txt)
+        os.remove(path_prefix + '.vocab')
 
         # load vocab
         self.vocab.Load(path_vocab)
