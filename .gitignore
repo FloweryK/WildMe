@@ -1,6 +1,7 @@
 ## BACKEND
 # virtualenv
 venv/
+.env
 
 # database
 *.json
