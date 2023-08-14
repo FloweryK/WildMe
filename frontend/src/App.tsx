@@ -1,10 +1,12 @@
 import React from "react";
-import SignInScreen from "./screens/signin";
+import { CssBaseline } from "@mui/material";
+import AuthScreen from "screens/AuthScreen";
 
 function App() {
   return (
     <div className="App">
-      <SignInScreen />
+      <CssBaseline />
+      <AuthScreen />
     </div>
   );
 }
