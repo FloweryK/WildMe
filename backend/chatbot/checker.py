@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader, random_split
 from torch.utils.tensorboard import SummaryWriter
 from chatbot.constants.custom_tokens import *
 from chatbot.dataset.base import collate_fn
-from chatbot.dataset.kakaotalk_mobile import KakaotalkMobileDataset
+from chatbot.dataset.kakaotalk import KakaotalkDataset
 from chatbot.model.classifier import Classifier
 from chatbot.utils import WarmupScheduler
 from chatbot.config import Config
@@ -61,7 +61,7 @@ class Checker:
         config = Config(path_config)
 
         # dataset
-        dataset = KakaotalkMobileDataset(config.n_vocab, path_data, path_vocab, speaker)
+        dataset = KakaotalkDataset(config.data_type, config.n_vocab, path_data, path_vocab, speaker)
         train_size = int(config.r_split * len(dataset))
         trainset, testset = random_split(dataset, [train_size, len(dataset) - train_size])
 
