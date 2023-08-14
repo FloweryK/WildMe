@@ -1,9 +1,8 @@
 import datetime
 import jwt
 import bcrypt
-from flask import Blueprint, request, g, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app
 from app.constants.status_code import *
-from app.decorator import login_required
 from db.database import database
 
 

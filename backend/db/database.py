@@ -1,6 +1,5 @@
 import io
 import os
-from cryptography.fernet import Fernet
 from db.decorator import update
 from db.utils import check_and_fill, hide_credentials
 from db.crypt import crypt
