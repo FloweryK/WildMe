@@ -13,7 +13,7 @@ const InputBox = ({ isNameError, isPasswordError }: InputBoxProps) => {
         margin="normal"
         required
         fullWidth
-        label={isNameError ? "없는 아이디에요 ;ㅅ;) " : "아이디"}
+        label="아이디"
         id="name"
         name="name"
         autoComplete="name"
@@ -24,7 +24,7 @@ const InputBox = ({ isNameError, isPasswordError }: InputBoxProps) => {
         margin="normal"
         required
         fullWidth
-        label={isPasswordError ? "비밀번호를 확인해주세요 ;ㅅ;) " : "비밀번호"}
+        label="비밀번호"
         id="password"
         name="password"
         type="password"

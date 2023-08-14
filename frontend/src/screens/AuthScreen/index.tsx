@@ -1,17 +1,61 @@
 import React, { useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import { Box, Button, Container } from "@mui/material";
+import { Avatar, Box, Button, Container, Typography } from "@mui/material";
 import { AuthRequest } from "api/interface";
 import { signIn, signUp } from "api";
 import { defaultTheme } from "screens/common/theme";
-import Header from "./components/Header";
 import InputBox from "./components/InputBox";
 import OptionBox from "./components/OptionBox";
 import Copyright from "screens/common/copyright";
+import Toast from "./components/Toast";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
+const States = {
+  Default: {
+    toastText: "",
+    severity: "success",
+    isNameError: false,
+    isPasswordError: false,
+  },
+  Success: {
+    toastText: "로그인 성공",
+    severity: "success",
+    isNameError: false,
+    isPasswordError: false,
+  },
+  InvalidUser: {
+    toastText: "아이디를 확인해주세요!",
+    severity: "error",
+    isNameError: true,
+    isPasswordError: false,
+  },
+  DuplicatedUser: {
+    toastText: "이미 존재하는 아이디에요!",
+    severity: "error",
+    isNameError: true,
+    isPasswordError: false,
+  },
+  InvalidPassword: {
+    toastText: "비밀번호를 확인해주세요!",
+    severity: "error",
+    isNameError: false,
+    isPasswordError: true,
+  },
+};
 
 export default function AuthScreen() {
-  const [isNameError, setNameError] = useState<boolean>(false);
-  const [isPasswordError, setPasswordError] = useState<boolean>(false);
+  const [isOpenToast, setOpenToast] = useState(false);
+  const [authState, setAuthState] = useState(States.Default);
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenToast(false);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -20,41 +64,63 @@ export default function AuthScreen() {
     const formdata = new FormData(event.currentTarget);
 
     // auth request
-    const data: AuthRequest = {
-      name: formdata.get("name")!.toString(),
-      password: formdata.get("password")!.toString(),
-    };
+    const name = formdata.get("name");
+    const password = formdata.get("password");
+    const isSignup = formdata.get("signup");
 
-    if (formdata.get("signup")) {
-      signUp(data)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    if (name === undefined) {
+      setAuthState(States.InvalidUser);
+      setOpenToast(true);
+    } else if (password === undefined) {
+      setAuthState(States.InvalidPassword);
+      setOpenToast(true);
     } else {
-      signIn(data)
-        .then((response) => {
-          setNameError(false);
-          setPasswordError(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response.status === 404) {
-            setNameError(true);
-            setPasswordError(false);
-          } else if (error.response.status === 401) {
-            setNameError(false);
-            setPasswordError(true);
-          }
-        });
+      const data: AuthRequest = {
+        name: name!.toString(),
+        password: password!.toString(),
+      };
+
+      if (isSignup) {
+        signUp(data)
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.error(error);
+            if (error.response.status === 409) {
+              setAuthState(States.DuplicatedUser);
+              setOpenToast(true);
+            }
+          });
+      } else {
+        signIn(data)
+          .then((response) => {
+            setAuthState(States.Success);
+            setOpenToast(true);
+          })
+          .catch((error) => {
+            console.error(error);
+            if (error.response.status === 404) {
+              setAuthState(States.InvalidUser);
+              setOpenToast(true);
+            } else if (error.response.status === 401) {
+              setAuthState(States.InvalidPassword);
+              setOpenToast(true);
+            }
+          });
+      }
     }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
+        <Toast
+          open={isOpenToast}
+          severity={authState.severity}
+          text={authState.toastText}
+          handleClose={handleClose}
+        />
         <Box
           sx={{
             marginTop: 8,
@@ -63,7 +129,12 @@ export default function AuthScreen() {
             alignItems: "center",
           }}
         >
-          <Header />
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            WildMe
+          </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -71,8 +142,8 @@ export default function AuthScreen() {
             sx={{ mt: 1 }}
           >
             <InputBox
-              isNameError={isNameError}
-              isPasswordError={isPasswordError}
+              isNameError={authState.isNameError}
+              isPasswordError={authState.isPasswordError}
             />
             <OptionBox />
             <Button
