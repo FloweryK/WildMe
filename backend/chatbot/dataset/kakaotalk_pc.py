@@ -1,5 +1,5 @@
 import re
-from .base import ChatDatasetBase
+from chatbot.dataset.base import ChatDatasetBase
 from db.crypt import crypt
 
 
