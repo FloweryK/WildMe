@@ -14,6 +14,7 @@ class ScheduleBluePrint(Blueprint):
         # add url rules
         self.add_url_rule('/reserve', 'reserve', self.reserve, methods=['POST'])
         self.add_url_rule('/read', 'read', self.read, methods=['POST'])
+        self.add_url_rule('/stop', 'stop', self.stop, methods=['POST'])
         self.add_url_rule('/delete', 'delete', self.delete, methods=['POST'])
     
     @login_required
@@ -79,6 +80,15 @@ class ScheduleBluePrint(Blueprint):
         schedule = database.select_all()
         schedule = [s for s in schedule if s['reserve_status'] != None]
         return jsonify(schedule), OK
+    
+    @login_required
+    def stop(self):
+        # update user
+        user = g.user
+        user['reserve_status'] = 'stop'
+        user = database.update(user['name'], user)
+
+        return {"message": "Deleted"}, OK
     
     @login_required
     def delete(self):

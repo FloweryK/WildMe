@@ -50,6 +50,7 @@ class Checker:
             # update user's reserve_status
             user['reserve_status'] = 'done'
             database.update(user['name'], user)
+            
             # except:
             #     # update user's reserve_status 
             #     user['reserve_status'] = 'failed'
@@ -93,3 +94,8 @@ class Checker:
         for epoch in range(config.n_epoch):
             trainer.run_epoch(epoch, trainloader, device=config.device, train=True, use_amp=config.use_amp, n_accum=config.n_accum)
             trainer.run_epoch(epoch, testloader, device=config.device, train=False, use_amp=config.use_amp, n_accum=config.n_accum)
+
+            # check stop sign
+            user = database.select(name=prefix)
+            if user['reserve_status'] == 'stop':
+                break
