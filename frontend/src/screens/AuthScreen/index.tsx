@@ -63,7 +63,7 @@ export default function AuthScreen() {
     setOpenToast(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // formdata
@@ -78,53 +78,53 @@ export default function AuthScreen() {
       // empty username
       setAuthState(States.InvalidUser);
       setOpenToast(true);
+      return;
     } else if (password === undefined) {
       // empty password
       setAuthState(States.InvalidPassword);
       setOpenToast(true);
-    } else {
-      const data: AuthRequest = {
-        name: name!.toString(),
-        password: password!.toString(),
-      };
-
-      if (isSignup) {
-        signUp(data)
-          .then((response) => {
-            // username already exists
-            setAuthState(States.SuccessSignup);
-            setOpenToast(true);
-          })
-          .catch((error) => {
-            console.error(error);
-            if (error.response.status === 409) {
-              // username already exists
-              setAuthState(States.DuplicatedUser);
-              setOpenToast(true);
-            }
-          });
-      } else {
-        signIn(data)
-          .then((response) => {
-            // login successful
-            setAuthState(States.SuccessSignin);
-            setOpenToast(true);
-            console.log(response);
-          })
-          .catch((error) => {
-            console.error(error);
-            if (error.response.status === 404) {
-              // username not exist
-              setAuthState(States.InvalidUser);
-              setOpenToast(true);
-            } else if (error.response.status === 401) {
-              // invalid password
-              setAuthState(States.InvalidPassword);
-              setOpenToast(true);
-            }
-          });
-      }
+      return;
     }
+
+    const data: AuthRequest = {
+      name: name!.toString(),
+      password: password!.toString(),
+    };
+
+    if (isSignup) {
+      await signUp(data)
+        .then((response) => {
+          setAuthState(States.SuccessSignup);
+          setOpenToast(true);
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response.status === 409) {
+            // username already exists
+            setAuthState(States.DuplicatedUser);
+            setOpenToast(true);
+          }
+        });
+    }
+
+    await signIn(data)
+      .then((response) => {
+        // login successful
+        setAuthState(States.SuccessSignin);
+        setOpenToast(true);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (error.response.status === 404) {
+          // username not exist
+          setAuthState(States.InvalidUser);
+          setOpenToast(true);
+        } else if (error.response.status === 401) {
+          // invalid password
+          setAuthState(States.InvalidPassword);
+          setOpenToast(true);
+        }
+      });
   };
 
   return (
