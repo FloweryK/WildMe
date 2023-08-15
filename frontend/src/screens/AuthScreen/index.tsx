@@ -4,11 +4,11 @@ import { Avatar, Box, Button, Container, Typography } from "@mui/material";
 import { AuthRequest } from "api/interface";
 import { signIn, signUp } from "api";
 import { defaultTheme } from "screens/common/theme";
+import Toast from "./components/Toast";
+import Header from "./components/Header";
 import InputBox from "./components/InputBox";
 import OptionBox from "./components/OptionBox";
 import Copyright from "screens/common/copyright";
-import Toast from "./components/Toast";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 const States = {
   Default: {
@@ -109,6 +109,7 @@ export default function AuthScreen() {
             // login successful
             setAuthState(States.SuccessSignin);
             setOpenToast(true);
+            console.log(response);
           })
           .catch((error) => {
             console.error(error);
@@ -143,12 +144,7 @@ export default function AuthScreen() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            WildMe
-          </Typography>
+          <Header />
           <Box
             component="form"
             onSubmit={handleSubmit}
