@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
 import { Box, Button, Container } from "@mui/material";
 import { AuthRequest } from "api/interface";
 import { signIn, signUp } from "api";
-import { defaultTheme } from "common/theme";
 import { ToastContext } from "common/Toast";
 import Header from "./components/Header";
 import InputBox from "./components/InputBox";
@@ -148,40 +146,33 @@ export default function LoginScreen() {
   }, [cookies.accessToken]);
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Header />
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Header />
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <InputBox
+            isNameError={authState.isNameError}
+            isPasswordError={authState.isPasswordError}
+          />
+          <OptionBox />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
           >
-            <InputBox
-              isNameError={authState.isNameError}
-              isPasswordError={authState.isPasswordError}
-            />
-            <OptionBox />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              로그인
-            </Button>
-          </Box>
+            로그인
+          </Button>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+      </Box>
+      <Copyright sx={{ mt: 8, mb: 4 }} />
+    </Container>
   );
 }

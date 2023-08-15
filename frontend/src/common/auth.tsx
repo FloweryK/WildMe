@@ -17,8 +17,6 @@ const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const isAuthenticated = !!cookies.accessToken;
-  console.log(cookies.accessToken);
-  console.log(isAuthenticated);
   return (
     <AuthContext.Provider value={{ isAuthenticated }}>
       {children}
