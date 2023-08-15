@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import InputBox from "./components/InputBox";
 import OptionBox from "./components/OptionBox";
 import Copyright from "common/copyright";
+import { useNavigate } from "react-router-dom";
 
 const States = {
   Default: {
@@ -52,6 +53,7 @@ const States = {
 export default function AuthScreen() {
   const [isOpenToast, setOpenToast] = useState(false);
   const [authState, setAuthState] = useState(States.Default);
+  const navigate = useNavigate();
 
   const handleClose = (
     event?: React.SyntheticEvent | Event,
@@ -112,6 +114,9 @@ export default function AuthScreen() {
         // login successful
         setAuthState(States.SuccessSignin);
         setOpenToast(true);
+
+        // move to personal page
+        navigate("/personal");
       })
       .catch((error) => {
         console.error(error);
