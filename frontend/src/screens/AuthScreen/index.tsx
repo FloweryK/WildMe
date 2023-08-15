@@ -11,6 +11,13 @@ import InputBox from "./components/InputBox";
 import OptionBox from "./components/OptionBox";
 import Copyright from "common/copyright";
 
+type State =
+  | "successSignup"
+  | "successSignin"
+  | "invalidName"
+  | "invalidPassword"
+  | "duplicatedName";
+
 export default function AuthScreen() {
   const navigate = useNavigate();
   const { setToastState } = useContext(ToastContext);
@@ -18,6 +25,66 @@ export default function AuthScreen() {
     isNameError: false,
     isPasswordError: false,
   });
+
+  const handleState = (state: State) => {
+    switch (state) {
+      case "successSignup":
+        setToastState({
+          isToastOpen: true,
+          toastSeverity: "success",
+          toastText: "회원가입 성공",
+        });
+        setAuthState({
+          isNameError: false,
+          isPasswordError: false,
+        });
+        break;
+      case "successSignin":
+        setToastState({
+          isToastOpen: true,
+          toastSeverity: "success",
+          toastText: "로그인 성공",
+        });
+        setAuthState({
+          isNameError: false,
+          isPasswordError: false,
+        });
+        break;
+      case "invalidName":
+        setToastState({
+          isToastOpen: true,
+          toastSeverity: "error",
+          toastText: "아이디를 확인해주세요!",
+        });
+        setAuthState({
+          isNameError: true,
+          isPasswordError: false,
+        });
+        break;
+      case "invalidPassword":
+        setToastState({
+          isToastOpen: true,
+          toastSeverity: "error",
+          toastText: "비밀번호를 확인해주세요!",
+        });
+        setAuthState({
+          isNameError: false,
+          isPasswordError: true,
+        });
+        break;
+      case "duplicatedName":
+        setToastState({
+          isToastOpen: true,
+          toastSeverity: "error",
+          toastText: "이미 존재하는 아이디에요!",
+        });
+        setAuthState({
+          isNameError: true,
+          isPasswordError: false,
+        });
+        break;
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,28 +98,10 @@ export default function AuthScreen() {
     const isSignup = formdata.get("signup");
 
     if (name === undefined) {
-      // empty username
-      setToastState({
-        isToastOpen: true,
-        toastSeverity: "error",
-        toastText: "아이디를 확인해주세요!",
-      });
-      setAuthState({
-        isNameError: true,
-        isPasswordError: false,
-      });
+      handleState("invalidName");
       return;
     } else if (password === undefined) {
-      // empty password
-      setToastState({
-        isToastOpen: true,
-        toastSeverity: "error",
-        toastText: "비밀번호를 확인해주세요!",
-      });
-      setAuthState({
-        isNameError: false,
-        isPasswordError: true,
-      });
+      handleState("invalidPassword");
       return;
     }
 
@@ -64,73 +113,27 @@ export default function AuthScreen() {
     if (isSignup) {
       await signUp(data)
         .then((response) => {
-          setToastState({
-            isToastOpen: true,
-            toastSeverity: "success",
-            toastText: "회원가입 성공",
-          });
-          setAuthState({
-            isNameError: false,
-            isPasswordError: false,
-          });
+          handleState("successSignup");
         })
         .catch((error) => {
           console.error(error);
           if (error.response.status === 409) {
-            // username already exists
-            setToastState({
-              isToastOpen: true,
-              toastSeverity: "error",
-              toastText: "이미 존재하는 아이디에요!",
-            });
-            setAuthState({
-              isNameError: true,
-              isPasswordError: false,
-            });
+            handleState("duplicatedName");
           }
         });
     }
 
     await signIn(data)
       .then((response) => {
-        // login successful
-        setToastState({
-          isToastOpen: true,
-          toastSeverity: "success",
-          toastText: "로그인 성공",
-        });
-        setAuthState({
-          isNameError: false,
-          isPasswordError: false,
-        });
-
-        // move to personal page
-        navigate("/personal");
+        handleState("successSignin");
+        navigate("/personal", { replace: true });
       })
       .catch((error) => {
         console.error(error);
         if (error.response.status === 404) {
-          // username not exist
-          setToastState({
-            isToastOpen: true,
-            toastSeverity: "error",
-            toastText: "아이디를 확인해주세요!",
-          });
-          setAuthState({
-            isNameError: true,
-            isPasswordError: false,
-          });
+          handleState("invalidName");
         } else if (error.response.status === 401) {
-          // invalid password
-          setToastState({
-            isToastOpen: true,
-            toastSeverity: "error",
-            toastText: "비밀번호를 확인해주세요!",
-          });
-          setAuthState({
-            isNameError: false,
-            isPasswordError: true,
-          });
+          handleState("invalidPassword");
         }
       });
   };
