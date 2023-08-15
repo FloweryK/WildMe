@@ -3,12 +3,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Avatar, Box, Button, Container, Typography } from "@mui/material";
 import { AuthRequest } from "api/interface";
 import { signIn, signUp } from "api";
-import { defaultTheme } from "screens/common/theme";
+import { defaultTheme } from "common/theme";
 import Toast from "./components/Toast";
 import Header from "./components/Header";
 import InputBox from "./components/InputBox";
 import OptionBox from "./components/OptionBox";
-import Copyright from "screens/common/copyright";
+import Copyright from "common/copyright";
 
 const States = {
   Default: {

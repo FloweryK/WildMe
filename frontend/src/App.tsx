@@ -1,12 +1,13 @@
 import React from "react";
 import { CssBaseline } from "@mui/material";
-import HomeScreen from "screens/HomeScreen";
+import AuthScreen from "screens/AuthScreen";
+import PersonalScreen from "screens/PersonalScreen";
 
 function App() {
   return (
     <div className="App">
       <CssBaseline />
-      <HomeScreen />
+      <AuthScreen />
     </div>
   );
 }
