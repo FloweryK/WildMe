@@ -1,69 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
-import { Avatar, Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { AuthRequest } from "api/interface";
 import { signIn, signUp } from "api";
 import { defaultTheme } from "common/theme";
-import Toast from "./components/Toast";
+import { ToastContext } from "common/Toast";
 import Header from "./components/Header";
 import InputBox from "./components/InputBox";
 import OptionBox from "./components/OptionBox";
 import Copyright from "common/copyright";
-import { useNavigate } from "react-router-dom";
-
-const States = {
-  Default: {
-    toastText: "",
-    severity: "success",
-    isNameError: false,
-    isPasswordError: false,
-  },
-  SuccessSignin: {
-    toastText: "로그인 성공",
-    severity: "success",
-    isNameError: false,
-    isPasswordError: false,
-  },
-  SuccessSignup: {
-    toastText: "회원가입 성공",
-    severity: "success",
-    isNameError: false,
-    isPasswordError: false,
-  },
-  InvalidUser: {
-    toastText: "아이디를 확인해주세요!",
-    severity: "error",
-    isNameError: true,
-    isPasswordError: false,
-  },
-  DuplicatedUser: {
-    toastText: "이미 존재하는 아이디에요!",
-    severity: "error",
-    isNameError: true,
-    isPasswordError: false,
-  },
-  InvalidPassword: {
-    toastText: "비밀번호를 확인해주세요!",
-    severity: "error",
-    isNameError: false,
-    isPasswordError: true,
-  },
-};
 
 export default function AuthScreen() {
-  const [isOpenToast, setOpenToast] = useState(false);
-  const [authState, setAuthState] = useState(States.Default);
   const navigate = useNavigate();
-
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenToast(false);
-  };
+  const { setToastState } = useContext(ToastContext);
+  const [authState, setAuthState] = useState({
+    isNameError: false,
+    isPasswordError: false,
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -78,13 +32,27 @@ export default function AuthScreen() {
 
     if (name === undefined) {
       // empty username
-      setAuthState(States.InvalidUser);
-      setOpenToast(true);
+      setToastState({
+        isToastOpen: true,
+        toastSeverity: "error",
+        toastText: "아이디를 확인해주세요!",
+      });
+      setAuthState({
+        isNameError: true,
+        isPasswordError: false,
+      });
       return;
     } else if (password === undefined) {
       // empty password
-      setAuthState(States.InvalidPassword);
-      setOpenToast(true);
+      setToastState({
+        isToastOpen: true,
+        toastSeverity: "error",
+        toastText: "비밀번호를 확인해주세요!",
+      });
+      setAuthState({
+        isNameError: false,
+        isPasswordError: true,
+      });
       return;
     }
 
@@ -96,15 +64,29 @@ export default function AuthScreen() {
     if (isSignup) {
       await signUp(data)
         .then((response) => {
-          setAuthState(States.SuccessSignup);
-          setOpenToast(true);
+          setToastState({
+            isToastOpen: true,
+            toastSeverity: "success",
+            toastText: "회원가입 성공",
+          });
+          setAuthState({
+            isNameError: false,
+            isPasswordError: false,
+          });
         })
         .catch((error) => {
           console.error(error);
           if (error.response.status === 409) {
             // username already exists
-            setAuthState(States.DuplicatedUser);
-            setOpenToast(true);
+            setToastState({
+              isToastOpen: true,
+              toastSeverity: "error",
+              toastText: "이미 존재하는 아이디에요!",
+            });
+            setAuthState({
+              isNameError: true,
+              isPasswordError: false,
+            });
           }
         });
     }
@@ -112,8 +94,15 @@ export default function AuthScreen() {
     await signIn(data)
       .then((response) => {
         // login successful
-        setAuthState(States.SuccessSignin);
-        setOpenToast(true);
+        setToastState({
+          isToastOpen: true,
+          toastSeverity: "success",
+          toastText: "로그인 성공",
+        });
+        setAuthState({
+          isNameError: false,
+          isPasswordError: false,
+        });
 
         // move to personal page
         navigate("/personal");
@@ -122,12 +111,26 @@ export default function AuthScreen() {
         console.error(error);
         if (error.response.status === 404) {
           // username not exist
-          setAuthState(States.InvalidUser);
-          setOpenToast(true);
+          setToastState({
+            isToastOpen: true,
+            toastSeverity: "error",
+            toastText: "아이디를 확인해주세요!",
+          });
+          setAuthState({
+            isNameError: true,
+            isPasswordError: false,
+          });
         } else if (error.response.status === 401) {
           // invalid password
-          setAuthState(States.InvalidPassword);
-          setOpenToast(true);
+          setToastState({
+            isToastOpen: true,
+            toastSeverity: "error",
+            toastText: "비밀번호를 확인해주세요!",
+          });
+          setAuthState({
+            isNameError: false,
+            isPasswordError: true,
+          });
         }
       });
   };
@@ -135,12 +138,6 @@ export default function AuthScreen() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
-        <Toast
-          open={isOpenToast}
-          severity={authState.severity}
-          text={authState.toastText}
-          handleClose={handleClose}
-        />
         <Box
           sx={{
             marginTop: 8,
