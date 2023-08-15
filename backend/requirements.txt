@@ -4,10 +4,13 @@ bcrypt==4.0.1
 blinker==1.6.2
 cachetools==5.3.1
 certifi==2023.7.22
+cffi==1.15.1
 charset-normalizer==3.2.0
 click==8.1.6
+cryptography==41.0.3
 filelock==3.12.2
 Flask==2.3.2
+Flask-Cors==4.0.0
 google-auth==2.22.0
 google-auth-oauthlib==1.0.0
 grpcio==1.57.0
@@ -24,6 +27,7 @@ oauthlib==3.2.2
 protobuf==4.24.0
 pyasn1==0.5.0
 pyasn1-modules==0.3.0
+pycparser==2.21
 PyJWT==2.8.0
 python-dotenv==1.0.0
 requests==2.31.0
