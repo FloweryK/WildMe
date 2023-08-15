@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box, Button, Container } from "@mui/material";
@@ -20,6 +21,7 @@ type State =
 
 export default function AuthScreen() {
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const { setToastState } = useContext(ToastContext);
   const [authState, setAuthState] = useState({
     isNameError: false,
@@ -126,7 +128,7 @@ export default function AuthScreen() {
     await signIn(data)
       .then((response) => {
         handleState("successSignin");
-        navigate("/personal", { replace: true });
+        setCookie("accessToken", response.Authorization);
       })
       .catch((error) => {
         console.error(error);
@@ -137,6 +139,12 @@ export default function AuthScreen() {
         }
       });
   };
+
+  useEffect(() => {
+    if (cookies.accessToken) {
+      navigate("/personal");
+    }
+  }, [cookies.accessToken]);
 
   return (
     <ThemeProvider theme={defaultTheme}>

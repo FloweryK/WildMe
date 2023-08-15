@@ -4,7 +4,7 @@ export interface AuthRequest {
 }
 
 export interface SignInResponse {
-  token: string;
+  Authorization: string;
 }
 
 export interface SignUpResponse {

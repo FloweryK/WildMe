@@ -4,6 +4,7 @@ import { CssBaseline } from "@mui/material";
 import { Toast, ToastContext, ToastStateInterface } from "common/Toast";
 import AuthScreen from "screens/AuthScreen";
 import PersonalScreen from "screens/PersonalScreen";
+import { CookiesProvider } from "react-cookie";
 
 function App() {
   const [toastState, setToastState] = useState<ToastStateInterface>({
@@ -32,12 +33,14 @@ function App() {
         handleClose={handleClose}
       />
       <ToastContext.Provider value={{ setToastState }}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<AuthScreen />} />
-            <Route path="/personal" element={<PersonalScreen />} />
-          </Routes>
-        </BrowserRouter>
+        <CookiesProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<AuthScreen />} />
+              <Route path="/personal" element={<PersonalScreen />} />
+            </Routes>
+          </BrowserRouter>
+        </CookiesProvider>
       </ToastContext.Provider>
     </div>
   );
