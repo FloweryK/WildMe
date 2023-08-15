@@ -19,7 +19,7 @@ type State =
   | "invalidPassword"
   | "duplicatedName";
 
-export default function AuthScreen() {
+export default function LoginScreen() {
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const { setToastState } = useContext(ToastContext);
@@ -89,6 +89,7 @@ export default function AuthScreen() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    console.log(cookies.accessToken);
     event.preventDefault();
 
     // formdata
@@ -142,7 +143,7 @@ export default function AuthScreen() {
 
   useEffect(() => {
     if (cookies.accessToken) {
-      navigate("/personal");
+      navigate("/auth/personal");
     }
   }, [cookies.accessToken]);
 
