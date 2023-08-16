@@ -87,7 +87,6 @@ export default function LoginScreen() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    console.log(cookies.accessToken);
     event.preventDefault();
 
     // formdata
