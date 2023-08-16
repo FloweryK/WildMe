@@ -3,6 +3,7 @@ SCHEMA = [
     "id",
     "name",
     "password",
+    "filename",
     "path_data",
     "path_vocab",
     "path_config",

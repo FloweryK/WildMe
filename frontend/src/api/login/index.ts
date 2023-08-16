@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosError } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 import { AuthRequest, SignInResponse, SignUpResponse } from "./interface";
 import instance from "../instance";
 

@@ -56,6 +56,7 @@ class ScheduleBluePrint(Blueprint):
         path_weight = os.path.join(dir_user, 'model.pt')
         
         # update user
+        user['filename'] = f.filename
         user['path_data'] = path_data
         user['path_vocab'] = path_vocab
         user['path_config'] = path_config
@@ -77,8 +78,14 @@ class ScheduleBluePrint(Blueprint):
     
     @login_required
     def read(self):
+        user = g.user
         schedule = database.select_all()
-        schedule = [s for s in schedule if s['reserve_status'] != None]
+        schedule = [{
+            'name': s['name'],
+            'filename': s['filename'],
+            'reserve_status': s['reserve_status'],
+            'reserve_timestamp': s['reserve_timestamp']
+        } for s in schedule if (s['reserve_status'] != None) and (s['name'] == user['name'])]
         return jsonify(schedule), OK
     
     @login_required
