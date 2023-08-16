@@ -8,6 +8,8 @@ interface ScheduleCardProps {
 const ScheduleCard = (props: ScheduleCardProps) => {
   const { schedule } = props;
 
+  const date = new Date(schedule.reserve_timestamp * 1000).toLocaleString();
+
   return (
     <Card variant="outlined">
       <CardContent>
@@ -17,7 +19,7 @@ const ScheduleCard = (props: ScheduleCardProps) => {
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
           {schedule.reserve_status}
           <br />
-          {schedule.reserve_timestamp}
+          {date}
           <br />
           {schedule.filename}
         </Typography>

@@ -1,5 +1,5 @@
 import { AxiosResponse, AxiosError } from "axios";
-import { Cookies, useCookies } from "react-cookie";
+import { Cookies } from "react-cookie";
 import instance from "../instance";
 import {
   GetScheduleResponse,

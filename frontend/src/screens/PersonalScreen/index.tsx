@@ -1,13 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Button, Container } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import LogoutIcon from "@mui/icons-material/Logout";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { ToastContext } from "common/Toast";
 import { getSchedule } from "api/personal";
 import { GetScheduleResponse } from "api/personal/interface";
 import ScheduleCard from "./components/ScheduleCard";
+import EmptyCard from "./components/EmptyCard";
+import ReserveFormDialog from "./components/ReserveFormDialog";
 
 export default function PersonalScreen() {
+  const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>();
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const { setToastState } = useContext(ToastContext);
@@ -21,30 +25,40 @@ export default function PersonalScreen() {
     });
   };
 
-  const handleRefresh = async () => {
+  const handleRefreshSchedule = async () => {
     getSchedule().then((response) => {
       setSchedules(response);
     });
   };
 
+  const handleAddSchedule = () => {
+    setOpenDialog(true);
+  };
+
+  const handleSubmitDialog = (event: React.FormEvent<HTMLFormElement>) => {};
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <Container component="main" maxWidth="xs">
-      <Button
-        onClick={handleLogout}
-        variant="contained"
-        color="primary"
-        endIcon={<DeleteIcon />}
-      >
+      <ReserveFormDialog
+        open={isOpenDialog}
+        handleSubmit={handleSubmitDialog}
+        handleClose={handleCloseDialog}
+      />
+      <Button onClick={handleLogout} color="primary" startIcon={<LogoutIcon />}>
         로그아웃
       </Button>
       <Button
-        onClick={handleRefresh}
-        variant="contained"
+        onClick={handleRefreshSchedule}
         color="primary"
-        endIcon={<DeleteIcon />}
+        startIcon={<RefreshIcon />}
       >
         새로고침
       </Button>
+      <EmptyCard onClick={handleAddSchedule} />
       {schedules?.map((schedule) => (
         <ScheduleCard schedule={schedule} />
       ))}

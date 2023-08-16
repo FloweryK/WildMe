@@ -1,4 +1,6 @@
 export interface ReserveScheduleRequest {
+  data_type: string;
+  file: File;
   speaker: string;
   n_vocab: number;
   n_seq: number;
@@ -17,7 +19,6 @@ export interface ReserveScheduleRequest {
   lr: number;
   warmup_steps: number;
   label_smoothing: number;
-  data_type: string;
 }
 
 export interface ReserveScheduleResponse {
