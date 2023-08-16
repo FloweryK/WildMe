@@ -1,11 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { AuthRequest, SignInResponse, SignUpResponse } from "./interface";
-
-const API_BASE_URL = "http://localhost:8080";
-
-const instance = axios.create({
-  baseURL: API_BASE_URL,
-});
+import instance from "../instance";
 
 async function signIn(data: AuthRequest): Promise<SignInResponse> {
   try {
