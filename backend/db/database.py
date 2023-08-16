@@ -1,7 +1,7 @@
 import io
 import os
 from db.decorator import update
-from db.utils import check_and_fill, hide_credentials
+from db.utils import check_schema, fill_schema, hide_credentials
 from db.crypt import crypt
 
         
@@ -17,7 +17,8 @@ class Database:
 
     @update
     def insert(self, user):
-        user = check_and_fill(user)
+        check_schema(user)
+        user = fill_schema(user)
         user['id'] = self.id_cur
 
         # put into data
@@ -41,9 +42,13 @@ class Database:
 
     @update
     def update(self, name, user):
+        check_schema(user)
+
         for i in self.data:
             if self.data[i]['name'] == name:
-                self.data[i] = check_and_fill(user)
+                for key, value in user.items():
+                    self.data[i][key] = value
+
                 return hide_credentials(self.data[i])
         
         return None
