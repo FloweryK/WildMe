@@ -110,7 +110,6 @@ export default function LoginScreen() {
           handleState("successSignup");
         })
         .catch((error) => {
-          console.error(error);
           if (error.response.status === 409) {
             handleState("duplicatedName");
             isDuplicated = true;
@@ -125,7 +124,6 @@ export default function LoginScreen() {
           setCookie("accessToken", response.Authorization);
         })
         .catch((error) => {
-          console.error(error);
           if (error.response.status === 404) {
             handleState("invalidName");
           } else if (error.response.status === 401) {
