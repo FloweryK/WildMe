@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Button, Container } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -50,6 +50,10 @@ export default function PersonalScreen() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
+
+  useEffect(() => {
+    handleRefreshSchedule();
+  }, []);
 
   return (
     <Container component="main" maxWidth="xs">
