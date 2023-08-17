@@ -20,7 +20,7 @@ const detailsDefault = [
   { name: "n_seq", value: 1000 },
   { name: "n_layer", value: 6 },
   { name: "n_head", value: 8 },
-  { name: "d_model", value: 512 },
+  { name: "d_emb", value: 512 },
   { name: "d_hidden", value: 2048 },
   { name: "dropout", value: 0.1 },
   { name: "scale", value: 8.0 },
@@ -42,42 +42,20 @@ interface ReserveFormProps {
 }
 
 const ReserveFormDialog = (props: ReserveFormProps) => {
-  const [isShowDetails, setShowDetails] = useState<boolean>(false);
   const { open, handleSubmit, handleClose } = props;
 
-  const toggleShowDetails = () => {
-    setShowDetails(!isShowDetails);
-  };
-
   return (
-    <Dialog
-      component="form"
-      open={open}
-      onSubmit={handleSubmit}
-      onClose={handleClose}
-    >
+    <Dialog component="form" open={open} onSubmit={handleSubmit} onClose={handleClose}>
       <DialogTitle>학습 예약하기</DialogTitle>
       <DialogContent>
         <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
           <InputLabel>텍스트 추출 경로</InputLabel>
-          <Select
-            id="data_type"
-            name="data_type"
-            label="텍스트 추출 경로"
-            defaultValue={"kakaotalk_mobile"}
-          >
+          <Select id="data_type" name="data_type" label="텍스트 추출 경로" defaultValue={"kakaotalk_mobile"}>
             <MenuItem value={"kakaotalk_mobile"}>카카오톡 모바일</MenuItem>
             <MenuItem value={"kakaotalk_pc"}>카카오톡 PC</MenuItem>
           </Select>
         </FormControl>
-        <Input
-          id="file"
-          name="file"
-          type="file"
-          inputProps={{ accept: ".txt" }}
-          fullWidth
-          required
-        />
+        <Input id="file" name="file" type="file" inputProps={{ accept: ".txt" }} fullWidth required />
         <TextField
           id="speaker"
           name="speaker"
@@ -87,24 +65,21 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
           variant="standard"
           required
         />
-        <Switch onClick={toggleShowDetails} value={isShowDetails} />
-        {isShowDetails && (
-          <Box>
-            {detailsDefault.map(({ name, value }) => (
-              <TextField
-                key={name}
-                id={name}
-                name={name}
-                label={name}
-                defaultValue={value}
-                fullWidth
-                margin="dense"
-                variant="standard"
-                required
-              />
-            ))}
-          </Box>
-        )}
+        <Box>
+          {detailsDefault.map(({ name, value }) => (
+            <TextField
+              key={name}
+              id={name}
+              name={name}
+              label={name}
+              defaultValue={value}
+              fullWidth
+              margin="dense"
+              variant="standard"
+              required
+            />
+          ))}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button type="submit">등록</Button>
