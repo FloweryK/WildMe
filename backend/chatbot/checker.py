@@ -38,23 +38,25 @@ class Checker:
             database.update(user['name'], user)
 
             # run training
-            self.train(
-                path_data=user['path_data'],
-                path_vocab=user['path_vocab'],
-                path_config=user['path_config'],
-                path_weight=user['path_weight'],
-                prefix=user['name'],
-                speaker=user['speaker'],
-            )
+            try:
+                self.train(
+                    path_data=user['path_data'],
+                    path_vocab=user['path_vocab'],
+                    path_config=user['path_config'],
+                    path_weight=user['path_weight'],
+                    prefix=user['name'],
+                    speaker=user['speaker'],
+                )
 
-            # update user's reserve_status
-            user['reserve_status'] = 'done'
-            database.update(user['name'], user)
-            
-            # except:
-            #     # update user's reserve_status 
-            #     user['reserve_status'] = 'failed'
-            #     database.update(user['name'], user)
+                # update user's reserve_status
+                user['reserve_status'] = 'done'
+                database.update(user['name'], user)
+            except Exception as e:
+                print(e)
+
+                # update user's reserve_status 
+                user['reserve_status'] = 'failed'
+                database.update(user['name'], user)
 
 
     def train(self, path_data, path_config, path_vocab, path_weight, prefix, speaker):
