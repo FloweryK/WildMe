@@ -1,27 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  Grid,
-  TextField,
-} from "@mui/material";
+import { Box, Button, Checkbox, Container, FormControlLabel, Grid, TextField } from "@mui/material";
 import { AuthRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
 import { ToastContext } from "common/Toast";
 import Header from "./components/Header";
 import Copyright from "common/copyright";
 
-type State =
-  | "successSignup"
-  | "successSignin"
-  | "invalidName"
-  | "invalidPassword"
-  | "duplicatedName";
+type State = "successSignup" | "successSignin" | "invalidName" | "invalidPassword" | "duplicatedName";
 
 export default function LoginScreen() {
   const navigate = useNavigate();
@@ -102,6 +89,7 @@ export default function LoginScreen() {
     const name = formdata.get("name");
     const password = formdata.get("password");
     const isSignup = formdata.get("signup");
+    let isDuplicated = false;
 
     if (name === undefined) {
       handleState("invalidName");
@@ -125,23 +113,26 @@ export default function LoginScreen() {
           console.error(error);
           if (error.response.status === 409) {
             handleState("duplicatedName");
+            isDuplicated = true;
           }
         });
     }
 
-    await signIn(data)
-      .then((response) => {
-        handleState("successSignin");
-        setCookie("accessToken", response.Authorization);
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response.status === 404) {
-          handleState("invalidName");
-        } else if (error.response.status === 401) {
-          handleState("invalidPassword");
-        }
-      });
+    if (!isDuplicated) {
+      await signIn(data)
+        .then((response) => {
+          handleState("successSignin");
+          setCookie("accessToken", response.Authorization);
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response.status === 404) {
+            handleState("invalidName");
+          } else if (error.response.status === 401) {
+            handleState("invalidPassword");
+          }
+        });
+    }
   };
 
   useEffect(() => {
@@ -189,37 +180,18 @@ export default function LoginScreen() {
           <Grid container>
             <Grid item xs>
               <FormControlLabel
-                control={
-                  <Checkbox
-                    id="signup"
-                    name="signup"
-                    value="signup"
-                    color="primary"
-                  />
-                }
+                control={<Checkbox id="signup" name="signup" value="signup" color="primary" />}
                 label="가입하고 로그인하기"
               />
             </Grid>
             <Grid>
               <FormControlLabel
-                control={
-                  <Checkbox
-                    id="rememberme"
-                    name="rememberme"
-                    value="remember"
-                    color="primary"
-                  />
-                }
+                control={<Checkbox id="rememberme" name="rememberme" value="remember" color="primary" />}
                 label="로그인 기억하기"
               />
             </Grid>
           </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             로그인
           </Button>
         </Box>
