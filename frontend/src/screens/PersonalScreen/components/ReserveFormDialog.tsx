@@ -1,11 +1,13 @@
 import {
   Box,
   Button,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   Input,
   InputLabel,
   MenuItem,
@@ -43,6 +45,11 @@ interface ReserveFormProps {
 
 const ReserveFormDialog = (props: ReserveFormProps) => {
   const { open, handleSubmit, handleClose } = props;
+  const [isShowDetails, setShowDetails] = useState<boolean>(false);
+
+  const handleShowDetails = () => {
+    setShowDetails(!isShowDetails);
+  };
 
   return (
     <Dialog component="form" open={open} onSubmit={handleSubmit} onClose={handleClose}>
@@ -65,21 +72,25 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
           variant="standard"
           required
         />
-        <Box>
-          {detailsDefault.map(({ name, value }) => (
-            <TextField
-              key={name}
-              id={name}
-              name={name}
-              label={name}
-              defaultValue={value}
-              fullWidth
-              margin="dense"
-              variant="standard"
-              required
-            />
-          ))}
-        </Box>
+
+        <FormControlLabel control={<Switch checked={isShowDetails} onChange={handleShowDetails} />} label="상세 설정" />
+        <Collapse in={isShowDetails}>
+          <Box>
+            {detailsDefault.map(({ name, value }) => (
+              <TextField
+                key={name}
+                id={name}
+                name={name}
+                label={name}
+                defaultValue={value}
+                fullWidth
+                margin="dense"
+                variant="standard"
+                required
+              />
+            ))}
+          </Box>
+        </Collapse>
       </DialogContent>
       <DialogActions>
         <Button type="submit">등록</Button>
