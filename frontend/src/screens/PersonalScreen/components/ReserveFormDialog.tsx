@@ -27,8 +27,6 @@ const detailsDefault = [
   { name: "dropout", value: 0.1 },
   { name: "scale", value: 8.0 },
   { name: "r_split", value: 0.9 },
-  { name: "device", value: "cpu" },
-  { name: "use_amp", value: true },
   { name: "n_epoch", value: 50 },
   { name: "n_batch", value: 16 },
   { name: "n_accum", value: 1 },
@@ -89,6 +87,20 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
                 required
               />
             ))}
+            <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
+              <InputLabel>CUDA 사용</InputLabel>
+              <Select id="device" name="device" label="CUDA 사용" defaultValue={"cuda"}>
+                <MenuItem value={"cuda"}>사용</MenuItem>
+                <MenuItem value={"cpu"}>미사용</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
+              <InputLabel>AMP 사용</InputLabel>
+              <Select id="use_amp" name="use_amp" label="AMP 사용" defaultValue={"false"}>
+                <MenuItem value={"true"}>사용</MenuItem>
+                <MenuItem value={"false"}>미사용</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
         </Collapse>
       </DialogContent>

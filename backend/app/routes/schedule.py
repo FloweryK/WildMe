@@ -39,7 +39,7 @@ class ScheduleBluePrint(Blueprint):
             "scale" :           float(request.form['scale']),
             "r_split" :         float(request.form['r_split']),
             "device" :          str(request.form['device']),
-            "use_amp" :         bool(request.form['use_amp'] == 'True'),
+            "use_amp" :         bool(request.form['use_amp'] == 'true'),
             "n_epoch" :         int(request.form['n_epoch']),
             "n_batch" :         int(request.form['n_batch']),
             "n_accum" :         int(request.form['n_accum']),
