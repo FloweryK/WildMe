@@ -25,17 +25,17 @@ export default function PersonalScreen() {
     });
   };
 
-  const handleRefreshSchedule = async () => {
+  const handleRefresh = async () => {
     getSchedule().then((response) => {
       setSchedules(response);
     });
   };
 
-  const handleAddSchedule = () => {
+  const handleAdd = () => {
     setOpenDialog(true);
   };
 
-  const handleSubmitDialog = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // reserve and update schedule
@@ -52,21 +52,21 @@ export default function PersonalScreen() {
   };
 
   useEffect(() => {
-    handleRefreshSchedule();
+    handleRefresh();
   }, []);
 
   return (
     <Container component="main" maxWidth="xs">
-      <ReserveFormDialog open={isOpenDialog} handleSubmit={handleSubmitDialog} handleClose={handleCloseDialog} />
+      <ReserveFormDialog open={isOpenDialog} handleSubmit={handleSubmit} handleClose={handleCloseDialog} />
       <Button onClick={handleLogout} color="primary" startIcon={<LogoutIcon />}>
         로그아웃
       </Button>
-      <Button onClick={handleRefreshSchedule} color="primary" startIcon={<RefreshIcon />}>
+      <Button onClick={handleRefresh} color="primary" startIcon={<RefreshIcon />}>
         새로고침
       </Button>
-      <EmptyCard onClick={handleAddSchedule} />
+      <EmptyCard onClick={handleAdd} />
       {schedules?.map((schedule) => (
-        <ScheduleCard schedule={schedule} />
+        <ScheduleCard key={schedule.reserve_timestamp} schedule={schedule} />
       ))}
     </Container>
   );
