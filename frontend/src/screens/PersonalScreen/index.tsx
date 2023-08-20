@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
+import { ToastContext } from "common/Toast";
 import { getSchedule, reserveSchedule } from "api/personal";
 import { GetScheduleResponse } from "api/personal/interface";
 import ScheduleCard from "./components/ScheduleCard";
@@ -10,12 +11,18 @@ import Header from "./components/Header";
 
 export default function PersonalScreen() {
   const navigate = useNavigate();
+  const { setToastState } = useContext(ToastContext);
   const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>([]);
 
   const handleRefresh = async () => {
     getSchedule().then((response) => {
       setSchedules(response);
+    });
+    setToastState({
+      isToastOpen: true,
+      toastSeverity: "success",
+      toastText: "새로고침 완료",
     });
   };
 
