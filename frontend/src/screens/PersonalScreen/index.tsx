@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 import { Button, Container } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -11,6 +12,7 @@ import EmptyCard from "./components/EmptyCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
 
 export default function PersonalScreen() {
+  const navigate = useNavigate();
   const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>([]);
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
@@ -51,6 +53,10 @@ export default function PersonalScreen() {
     setOpenDialog(false);
   };
 
+  const handleClick = () => {
+    navigate("/auth/chat");
+  };
+
   useEffect(() => {
     handleRefresh();
   }, []);
@@ -66,7 +72,7 @@ export default function PersonalScreen() {
       </Button>
       <EmptyCard onClick={handleAdd} />
       {schedules?.map((schedule) => (
-        <ScheduleCard key={schedule.reserve_timestamp} schedule={schedule} />
+        <ScheduleCard key={schedule.reserve_timestamp} schedule={schedule} onClick={handleClick} />
       ))}
     </Container>
   );

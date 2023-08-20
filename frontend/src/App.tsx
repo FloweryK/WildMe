@@ -3,10 +3,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
 import { CssBaseline } from "@mui/material";
 import { Toast, ToastContext, ToastStateInterface } from "common/Toast";
-import PersonalScreen from "screens/PersonalScreen";
-import LoginScreen from "screens/LoginScreen";
 import { AuthProvider, AuthWrapper } from "common/auth";
 import ErrorBoundary from "common/ErrorBoundary";
+import LoginScreen from "screens/LoginScreen";
+import PersonalScreen from "screens/PersonalScreen";
+import ChatScreen from "screens/ChatScreen";
 
 function App() {
   const [toastState, setToastState] = useState<ToastStateInterface>({
@@ -40,6 +41,7 @@ function App() {
                   <Route path="/" element={<LoginScreen />} />
                   <Route path="/auth" element={<AuthWrapper />}>
                     <Route path="personal" element={<PersonalScreen />} />
+                    <Route path="chat" element={<ChatScreen />} />
                   </Route>
                 </Routes>
               </BrowserRouter>
