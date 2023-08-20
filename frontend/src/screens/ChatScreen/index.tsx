@@ -4,7 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import ChatMsg from "./components/ChatMsg";
 
-const messages = ["hello", "it's me"];
+const messages = ["hello", "it's me", "i was wondering if"];
 
 export default function ChatScreen() {
   const navigate = useNavigate();

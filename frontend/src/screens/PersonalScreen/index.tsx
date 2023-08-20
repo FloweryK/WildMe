@@ -63,7 +63,11 @@ export default function PersonalScreen() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <ReserveFormDialog open={isOpenDialog} handleSubmit={handleSubmit} handleClose={handleCloseDialog} />
+      <ReserveFormDialog
+        open={isOpenDialog}
+        handleSubmit={handleSubmit}
+        handleClose={handleCloseDialog}
+      />
       <Button onClick={handleLogout} color="primary" startIcon={<LogoutIcon />}>
         로그아웃
       </Button>
@@ -72,7 +76,11 @@ export default function PersonalScreen() {
       </Button>
       <EmptyCard onClick={handleAdd} />
       {schedules?.map((schedule) => (
-        <ScheduleCard key={schedule.reserve_timestamp} schedule={schedule} onClick={handleClick} />
+        <ScheduleCard
+          key={schedule.reserve_timestamp}
+          schedule={schedule}
+          onClick={handleClick}
+        />
       ))}
     </Container>
   );

@@ -1,46 +1,69 @@
 import React from "react";
 import { Avatar, Grid, Typography } from "@mui/material";
 import { styled } from "styled-components";
+import { defaultTheme } from "common/theme";
+
+const RADIUS = "32px";
 
 const StyledChatMsg = styled.div`
-  .leftfirst {
-    text-align: left;
+  p {
+    margin-bottom: 4px;
+    padding: 4px 16px;
+    display: inline-block;
+    word-break: break-word;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    width: fit-content;
   }
-  .leftmid {
-    text-align: left;
+  .left {
+    p {
+      text-align: left;
+      border-top-right-radius: ${RADIUS};
+      border-bottom-right-radius: ${RADIUS};
+      background-color: ${defaultTheme.palette.secondary.main};
+
+      &:first-child {
+        border-top-left-radius: ${RADIUS};
+      }
+      &:last-child {
+        border-bottom-left-radius: ${RADIUS};
+      }
+      &:first-child:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: ${RADIUS};
+      }
+    }
   }
-  .leftlast {
-    text-align: left;
-  }
-  .rightfirst {
-    text-align: right;
-  }
-  .rightmid {
-    text-align: right;
-  }
-  .rightlast {
-    text-align: right;
+  .right {
+    align-items: flex-end;
+    p {
+      text-align: right;
+      color: white;
+      border-top-left-radius: ${RADIUS};
+      border-bottom-left-radius: ${RADIUS};
+      background-color: ${defaultTheme.palette.primary.main};
+
+      &:first-child {
+        border-top-right-radius: ${RADIUS};
+      }
+      &:last-child {
+        border-bottom-right-radius: ${RADIUS};
+      }
+      &:first-child:last-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: ${RADIUS};
+      }
+    }
   }
 `;
 
 type ChatMsgSide = "left" | "right";
-type ChatMsgOrder = "first" | "mid" | "last";
 
 interface ChatMsgInterface {
   avatar: string;
   messages: string[];
   side: ChatMsgSide;
 }
-
-const getOrder = (total: number, i: number): ChatMsgOrder => {
-  if (i === 0) {
-    return "first";
-  } else if (i === total - 1) {
-    return "last";
-  } else {
-    return "mid";
-  }
-};
 
 const ChatMsg = (props: ChatMsgInterface) => {
   const { avatar, messages, side } = props;
@@ -57,11 +80,9 @@ const ChatMsg = (props: ChatMsgInterface) => {
             <Avatar src={avatar} />
           </Grid>
         )}
-        <Grid item xs={8}>
+        <Grid item xs={8} className={side} sx={{ display: "flex", flexDirection: "column" }}>
           {messages.map((msg, i) => (
-            <div>
-              <Typography className={side + getOrder(msg.length, i)}>{msg}</Typography>
-            </div>
+            <Typography key={`${msg}-${i}`}>{msg}</Typography>
           ))}
         </Grid>
       </Grid>
