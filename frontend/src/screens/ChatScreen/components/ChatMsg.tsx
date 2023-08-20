@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar, Grid, Typography } from "@mui/material";
 import { styled } from "styled-components";
 import { defaultTheme } from "common/theme";
@@ -7,6 +6,7 @@ const RADIUS = "32px";
 
 const StyledChatMsg = styled.div`
   p {
+    text-align: left;
     margin-bottom: 4px;
     padding: 4px 16px;
     display: inline-block;
@@ -17,7 +17,6 @@ const StyledChatMsg = styled.div`
   }
   .left {
     p {
-      text-align: left;
       border-top-right-radius: ${RADIUS};
       border-bottom-right-radius: ${RADIUS};
       background-color: ${defaultTheme.palette.secondary.main};
@@ -35,9 +34,9 @@ const StyledChatMsg = styled.div`
     }
   }
   .right {
+    margin-right: 10px;
     align-items: flex-end;
     p {
-      text-align: right;
       color: white;
       border-top-left-radius: ${RADIUS};
       border-bottom-left-radius: ${RADIUS};
@@ -59,7 +58,7 @@ const StyledChatMsg = styled.div`
 
 type ChatMsgSide = "left" | "right";
 
-interface ChatMsgInterface {
+export interface ChatMsgInterface {
   avatar: string;
   messages: string[];
   side: ChatMsgSide;
