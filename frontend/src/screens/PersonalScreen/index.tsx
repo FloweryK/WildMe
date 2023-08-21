@@ -4,10 +4,10 @@ import { Container } from "@mui/material";
 import { ToastContext } from "common/Toast";
 import { getSchedule, reserveSchedule } from "api/personal";
 import { GetScheduleResponse } from "api/personal/interface";
-import ScheduleCard from "./components/ScheduleCard";
 import EmptyCard from "./components/EmptyCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
 import Header from "./components/Header";
+import ScheduleCard from "./components/ScheduleCard";
 
 export default function PersonalScreen() {
   const navigate = useNavigate();

@@ -1,6 +1,7 @@
 import { Avatar, Grid, Typography } from "@mui/material";
 import { styled } from "styled-components";
 import { defaultTheme } from "common/theme";
+import { ChatMsgInterface } from "./interface";
 
 const RADIUS = "32px";
 
@@ -55,14 +56,6 @@ const StyledChatMsg = styled.div`
     }
   }
 `;
-
-type ChatMsgSide = "left" | "right";
-
-export interface ChatMsgInterface {
-  avatar: string;
-  messages: string[];
-  side: ChatMsgSide;
-}
 
 const ChatMsg = (props: ChatMsgInterface) => {
   const { avatar, messages, side } = props;

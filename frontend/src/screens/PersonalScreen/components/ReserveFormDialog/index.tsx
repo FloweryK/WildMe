@@ -16,6 +16,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
+import { ReserveFormProps } from "./interface";
 
 const detailsDefault = [
   { name: "n_vocab", value: 20000 + 7 },
@@ -35,12 +36,6 @@ const detailsDefault = [
   { name: "label_smoothing", value: 0.1 },
 ];
 
-interface ReserveFormProps {
-  open: boolean;
-  handleSubmit: any;
-  handleClose: any;
-}
-
 const ReserveFormDialog = (props: ReserveFormProps) => {
   const { open, handleSubmit, handleClose } = props;
   const [isShowDetails, setShowDetails] = useState<boolean>(false);
@@ -55,12 +50,24 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
       <DialogContent>
         <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
           <InputLabel>텍스트 추출 경로</InputLabel>
-          <Select id="data_type" name="data_type" label="텍스트 추출 경로" defaultValue={"kakaotalk_mobile"}>
+          <Select
+            id="data_type"
+            name="data_type"
+            label="텍스트 추출 경로"
+            defaultValue={"kakaotalk_mobile"}
+          >
             <MenuItem value={"kakaotalk_mobile"}>카카오톡 모바일</MenuItem>
             <MenuItem value={"kakaotalk_pc"}>카카오톡 PC</MenuItem>
           </Select>
         </FormControl>
-        <Input id="file" name="file" type="file" inputProps={{ accept: ".txt" }} fullWidth required />
+        <Input
+          id="file"
+          name="file"
+          type="file"
+          inputProps={{ accept: ".txt" }}
+          fullWidth
+          required
+        />
         <TextField
           id="speaker"
           name="speaker"
@@ -71,7 +78,10 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
           required
         />
 
-        <FormControlLabel control={<Switch checked={isShowDetails} onChange={handleShowDetails} />} label="상세 설정" />
+        <FormControlLabel
+          control={<Switch checked={isShowDetails} onChange={handleShowDetails} />}
+          label="상세 설정"
+        />
         <Collapse in={isShowDetails}>
           <Box>
             {detailsDefault.map(({ name, value }) => (

@@ -1,14 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Checkbox, Container, FormControlLabel, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Grid,
+  TextField,
+} from "@mui/material";
 import { AuthRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
 import { ToastContext } from "common/Toast";
 import Header from "./components/Header";
-import Copyright from "common/copyright";
+import Copyright from "common/Copyright";
 
-type State = "successSignup" | "successSignin" | "invalidName" | "invalidPassword" | "duplicatedName";
+type State =
+  | "successSignup"
+  | "successSignin"
+  | "invalidName"
+  | "invalidPassword"
+  | "duplicatedName";
 
 export default function LoginScreen() {
   const navigate = useNavigate();
@@ -184,7 +197,14 @@ export default function LoginScreen() {
             </Grid>
             <Grid>
               <FormControlLabel
-                control={<Checkbox id="rememberme" name="rememberme" value="remember" color="primary" />}
+                control={
+                  <Checkbox
+                    id="rememberme"
+                    name="rememberme"
+                    value="remember"
+                    color="primary"
+                  />
+                }
                 label="로그인 기억하기"
               />
             </Grid>

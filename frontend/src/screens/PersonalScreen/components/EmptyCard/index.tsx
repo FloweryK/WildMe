@@ -1,6 +1,7 @@
 import { Card, CardActionArea, CardContent } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { styled } from "styled-components";
+import { EmptyCardProps } from "./interface";
 
 const StyledEmptyCard = styled.div`
   .card {
@@ -16,10 +17,6 @@ const StyledEmptyCard = styled.div`
     border: "2px dashed #777";
   }
 `;
-
-interface EmptyCardProps {
-  onClick: any;
-}
 
 const EmptyCard = (props: EmptyCardProps) => {
   const { onClick } = props;

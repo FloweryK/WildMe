@@ -1,27 +1,14 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Navigate, Outlet, redirect, useNavigate } from "react-router-dom";
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-}
-
-interface AuthWrapperProps {}
+import { Outlet, useNavigate } from "react-router-dom";
+import { AuthContextType, AuthProviderProps } from "./interface";
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const isAuthenticated = !!cookies.accessToken;
-  return (
-    <AuthContext.Provider value={{ isAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isAuthenticated }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
@@ -33,7 +20,7 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthWrapper: React.FC<AuthWrapperProps> = () => {
+export const AuthWrapper: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 

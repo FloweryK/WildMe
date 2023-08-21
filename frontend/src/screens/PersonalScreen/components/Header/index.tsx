@@ -4,10 +4,7 @@ import { Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { ToastContext } from "common/Toast";
-
-interface HeaderProps {
-  onRefresh: () => Promise<void>;
-}
+import { HeaderProps } from "./interface";
 
 const Header = (props: HeaderProps) => {
   const { onRefresh } = props;

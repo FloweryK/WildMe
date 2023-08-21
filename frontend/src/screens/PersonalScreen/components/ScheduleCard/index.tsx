@@ -1,10 +1,5 @@
 import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
-import { GetScheduleResponse } from "api/personal/interface";
-
-interface ScheduleCardProps {
-  schedule: GetScheduleResponse;
-  onClick: any;
-}
+import { ScheduleCardProps } from "./interface";
 
 const ScheduleCard = (props: ScheduleCardProps) => {
   const { schedule, onClick } = props;
