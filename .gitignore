@@ -5,7 +5,8 @@ venv/
 
 # database
 backend/db/*.json
-backend/db/files
+backend/db/users
+backend/db/schedules
 
 # tensorboard
 runs/

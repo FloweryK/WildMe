@@ -1,10 +1,11 @@
 import os
 import json
+import uuid
 import datetime
 from flask import Blueprint, g, request, jsonify
 from app.constants.status_code import *
 from app.decorator import login_required
-from db.database import db_user
+from db.database import db_schedule
 
 
 class ScheduleBluePrint(Blueprint):
@@ -49,26 +50,31 @@ class ScheduleBluePrint(Blueprint):
         }
 
         # file path
-        dir_user = os.path.join(db_user.path_fs, user['name'])
-        path_data = os.path.join(dir_user, 'data.txt')
-        path_vocab = os.path.join(dir_user, 'vocab.model')
-        path_config = os.path.join(dir_user, 'config.json')
-        path_weight = os.path.join(dir_user, 'model.pt')
+        tag = uuid.uuid4().hex
+        dir_user = os.path.join(db_schedule.path_fs, user['name'])
+        path_data = os.path.join(dir_user, f'{tag}_data.txt')
+        path_vocab = os.path.join(dir_user, f'{tag}_vocab.model')
+        path_config = os.path.join(dir_user, f'{tag}_config.json')
+        path_weight = os.path.join(dir_user, f'{tag}_model.pt')
         
-        # update user
-        user['filename'] = f.filename
-        user['path_data'] = path_data
-        user['path_vocab'] = path_vocab
-        user['path_config'] = path_config
-        user['path_weight'] = path_weight
-        user['speaker'] = speaker
-        user['reserve_timestamp'] = datetime.datetime.now().timestamp()
-        user['reserve_status'] = 'reserved'
-        user = db_user.update(where={"name": user['name']}, row=user)
+        # create row
+        schedule = {
+            'tag': tag,
+            'name': user['name'],
+            'filename': f.filename,
+            'path_data': path_data,
+            'path_vocab': path_vocab,
+            'path_config': path_config,
+            'path_weight': path_weight,
+            'speaker': speaker,
+            'reserve_timestamp': datetime.datetime.now().timestamp(),
+            'reserve_status': 'reserved',
+        }
+        db_schedule.insert(schedule)
 
         # upload to db
         os.makedirs(dir_user, exist_ok=True)
-        db_user.fs_upload(f, path_data)
+        db_schedule.fs_upload(f, path_data)
 
         # upload config as json
         with open(path_config, 'w') as j:
@@ -79,36 +85,26 @@ class ScheduleBluePrint(Blueprint):
     @login_required
     def read(self):
         user = g.user
-        schedule = db_user.select_all()
+        schedule = db_schedule.select_all()
         schedule = [{
+            'tag': s['tag'],
             'name': s['name'],
             'filename': s['filename'],
             'reserve_status': s['reserve_status'],
-            'reserve_timestamp': s['reserve_timestamp']
+            'reserve_timestamp': s['reserve_timestamp'],
         } for s in schedule if (s['reserve_status'] != None) and (s['name'] == user['name'])]
         return jsonify(schedule), OK
     
     @login_required
     def stop(self):
-        # update user
-        user = g.user
-        user['reserve_status'] = 'stop'
-        user = db_user.update(where={"name": user['name']}, row=user)
+        # extract data
+        tag = str(request.json['tag'])
 
+        # find schedule
+        schedule = db_schedule.select(where={"tag": tag})
+        schedule['reserve_status'] = 'stop'
+
+        # update schedule
+        db_schedule.update(where={"tag": tag}, row=schedule)
+        
         return {"message": "Deleted"}, OK
-    
-    @login_required
-    def delete(self):
-        # update user
-        user = g.user
-        user['path_data'] = None
-        user['path_vocab'] = None
-        user['path_config'] = None
-        user['path_weight'] = None
-        user['speaker'] = None
-        user['reserve_timestamp'] = None
-        user['reserve_status'] = None
-        user = db_user.update(where={"name": user['name']}, row=user)
-
-        return {"message": "Deleted"}, OK
-

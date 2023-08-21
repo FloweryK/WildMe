@@ -91,6 +91,19 @@ db_user = Database(
         "id",
         "name",
         "password",
+    ],
+    credentials=[
+        "password"
+    ],
+    path_fs='db/users', 
+    path_data='db/users/data.json'
+)
+
+db_schedule = Database(
+    schema=[
+        "id",
+        "tag",
+        "name",
         "filename",
         "path_data",
         "path_vocab",
@@ -100,9 +113,7 @@ db_user = Database(
         "reserve_timestamp",
         "reserve_status"
     ],
-    credentials=[
-        "password"
-    ],
-    path_fs='db/files', 
-    path_data='db/files/data.json'
+    credentials=[],
+    path_fs='db/schedules', 
+    path_data='db/schedules/data.json'
 )

@@ -10,56 +10,57 @@ from chatbot.model.classifier import Classifier
 from chatbot.utils import WarmupScheduler
 from chatbot.config import Config
 from chatbot.trainer import Trainer
-from db.database import db_user
+from db.database import db_schedule
 
 
 class Checker:
     def run(self):
         while True:
             time.sleep(1)
-            schedule = db_user.select_all()
+            schedules = db_schedule.select_all()
 
             # check ongoing
-            ongoing = [user for user in schedule if user['reserve_status'] == "ongoing"]
+            ongoing = [schedule for schedule in schedules if schedule['reserve_status'] == "ongoing"]
             if ongoing:
                 continue
 
             # check reserved
-            reserved = [user for user in schedule if user['reserve_status'] == "reserved"]
+            reserved = [schedule for schedule in schedules if schedule['reserve_status'] == "reserved"]
             reserved = sorted(reserved, key=lambda x: x['reserve_timestamp'])
             if not reserved:
                 continue
 
             # run the training process for the first reserved element
-            user = reserved[0]
+            schedule = reserved[0]
 
             # update user's reserved_status
-            user['reserve_status'] = 'ongoing'
-            db_user.update(where={"name": user['name']}, row=user)
+            schedule['reserve_status'] = 'ongoing'
+            db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
 
             # run training
             try:
                 self.train(
-                    path_data=user['path_data'],
-                    path_vocab=user['path_vocab'],
-                    path_config=user['path_config'],
-                    path_weight=user['path_weight'],
-                    prefix=user['name'],
-                    speaker=user['speaker'],
+                    tag=schedule['tag'],
+                    path_data=schedule['path_data'],
+                    path_vocab=schedule['path_vocab'],
+                    path_config=schedule['path_config'],
+                    path_weight=schedule['path_weight'],
+                    prefix=schedule['name'],
+                    speaker=schedule['speaker'],
                 )
 
                 # update user's reserve_status
-                user['reserve_status'] = 'done'
-                db_user.update(where={"name": user['name']}, row=user)
+                schedule['reserve_status'] = 'done'
+                db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
             except Exception as e:
                 print(e)
 
                 # update user's reserve_status 
-                user['reserve_status'] = 'failed'
-                db_user.update(where={"name": user['name']}, row=user)
+                schedule['reserve_status'] = 'failed'
+                db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
 
 
-    def train(self, path_data, path_config, path_vocab, path_weight, prefix, speaker):
+    def train(self, tag, path_data, path_config, path_vocab, path_weight, prefix, speaker):
         # load config
         config = Config(path_config)
 
@@ -98,6 +99,6 @@ class Checker:
             trainer.run_epoch(epoch, testloader, device=config.device, train=False, use_amp=config.use_amp, n_accum=config.n_accum)
 
             # check stop sign
-            user = db_user.select({"name": prefix})
-            if user['reserve_status'] == 'stop':
+            schedule = db_schedule.select({"tag": tag})
+            if schedule['reserve_status'] == 'stop':
                 break
