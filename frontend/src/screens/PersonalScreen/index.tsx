@@ -9,7 +9,7 @@ import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
 
-export default function PersonalScreen() {
+const PersonalScreen = () => {
   const navigate = useNavigate();
   const { setToastState } = useContext(ToastContext);
   const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
@@ -70,4 +70,6 @@ export default function PersonalScreen() {
       ))}
     </Container>
   );
-}
+};
+
+export default PersonalScreen;

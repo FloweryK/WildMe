@@ -23,7 +23,7 @@ type State =
   | "invalidPassword"
   | "duplicatedName";
 
-export default function LoginScreen() {
+const LoginScreen = () => {
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const { setToastState } = useContext(ToastContext);
@@ -229,4 +229,6 @@ export default function LoginScreen() {
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
-}
+};
+
+export default LoginScreen;

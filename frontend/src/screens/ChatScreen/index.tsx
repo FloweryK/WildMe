@@ -21,7 +21,7 @@ const tmpChatMsgs: ChatMsgInterface[] = [
   },
 ];
 
-export default function ChatScreen() {
+const ChatScreen = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [chatMsgs, setChatMsgs] = useState<ChatMsgInterface[]>(tmpChatMsgs);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -72,4 +72,6 @@ export default function ChatScreen() {
       />
     </Container>
   );
-}
+};
+
+export default ChatScreen;

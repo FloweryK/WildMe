@@ -10,7 +10,7 @@ import LoginScreen from "screens/LoginScreen";
 import PersonalScreen from "screens/PersonalScreen";
 import ChatScreen from "screens/ChatScreen";
 
-function App() {
+const App = () => {
   const [toastState, setToastState] = useState<ToastStateInterface>({
     isToastOpen: false,
     toastSeverity: "success",
@@ -55,6 +55,6 @@ function App() {
       </ErrorBoundary>
     </div>
   );
-}
+};
 
 export default App;
