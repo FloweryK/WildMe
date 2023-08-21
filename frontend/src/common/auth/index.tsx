@@ -5,6 +5,15 @@ import { AuthContextType, AuthProviderProps } from "./interface";
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
+const useAuth = () => {
+  const context = React.useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
   const isAuthenticated = !!cookies.accessToken;
@@ -13,15 +22,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = React.useContext(AuthContext);
-
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
 
 export const AuthWrapper: React.FC = () => {

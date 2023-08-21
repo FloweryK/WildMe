@@ -104,6 +104,7 @@ const LoginScreen = () => {
     const isSignup = formdata.get("signup");
     let isDuplicated = false;
 
+    // check invalid name or password
     if (name === undefined) {
       handleState("invalidName");
       return;
@@ -112,11 +113,13 @@ const LoginScreen = () => {
       return;
     }
 
+    // make request data
     const data: AuthRequest = {
       name: name!.toString(),
       password: password!.toString(),
     };
 
+    // send signup request if needed
     if (isSignup) {
       await signUp(data)
         .then((response) => {
@@ -130,6 +133,7 @@ const LoginScreen = () => {
         });
     }
 
+    // send signin request if needed
     if (!isDuplicated) {
       await signIn(data)
         .then((response) => {

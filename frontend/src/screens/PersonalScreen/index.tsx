@@ -15,7 +15,15 @@ const PersonalScreen = () => {
   const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>([]);
 
-  const handleRefresh = async () => {
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleRefreshSchedule = async () => {
     getSchedule().then((response) => {
       setSchedules(response);
     });
@@ -24,14 +32,6 @@ const PersonalScreen = () => {
       toastSeverity: "success",
       toastText: "새로고침 완료",
     });
-  };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
   };
 
   const handleSubmitSchedule = async (
@@ -54,7 +54,7 @@ const PersonalScreen = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Header onRefresh={handleRefresh} />
+      <Header onRefresh={handleRefreshSchedule} />
       <ReserveFormDialog
         open={isOpenDialog}
         handleSubmit={handleSubmitSchedule}
