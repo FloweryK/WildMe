@@ -64,7 +64,7 @@ class ScheduleBluePrint(Blueprint):
         user['speaker'] = speaker
         user['reserve_timestamp'] = datetime.datetime.now().timestamp()
         user['reserve_status'] = 'reserved'
-        user = database.update(user['name'], user)
+        user = database.update(where={"name": user['name']}, row=user)
 
         # upload to db
         os.makedirs(dir_user, exist_ok=True)
@@ -93,7 +93,7 @@ class ScheduleBluePrint(Blueprint):
         # update user
         user = g.user
         user['reserve_status'] = 'stop'
-        user = database.update(user['name'], user)
+        user = database.update(where={"name": user['name']}, row=user)
 
         return {"message": "Deleted"}, OK
     
@@ -108,7 +108,7 @@ class ScheduleBluePrint(Blueprint):
         user['speaker'] = None
         user['reserve_timestamp'] = None
         user['reserve_status'] = None
-        user = database.update(user['name'], user)
+        user = database.update(where={"name": user['name']}, row=user)
 
         return {"message": "Deleted"}, OK
 

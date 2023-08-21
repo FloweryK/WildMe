@@ -24,7 +24,7 @@ class AuthBluePrint(Blueprint):
             return {'message': 'Both name and password are required'}, BAD_REQUEST
         
         # check if the user's name already exists
-        if database.select(name):
+        if database.select(where={"name": name}):
             return {'message': 'Name already exists'}, CONFLICT
         
         # encrypt password
@@ -45,7 +45,7 @@ class AuthBluePrint(Blueprint):
         password = str(request.json['password'])
 
         # get user data
-        user = database.select(name, show_credentials=True)
+        user = database.select(where={"name": name}, show_credentials=True)
 
         # check if the user exists
         if not user:

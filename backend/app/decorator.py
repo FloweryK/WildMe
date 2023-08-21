@@ -25,7 +25,7 @@ def login_required(func):
                 return {'message': 'Unauthorized access'}, UNAUTHORIZED
 
             # get user
-            user = database.select(payload["name"])
+            user = database.select(where={"name": payload["name"]})
 
             # check if the access token is expired
             if (user is None) or (payload['expire_timestamp'] < datetime.datetime.now().timestamp()):
