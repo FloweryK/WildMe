@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -15,7 +16,6 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
 import { ReserveFormProps } from "./interface";
 
 const detailsDefault = [
@@ -45,7 +45,12 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
   };
 
   return (
-    <Dialog component="form" open={open} onSubmit={handleSubmit} onClose={handleClose}>
+    <Dialog
+      component="form"
+      open={open}
+      onSubmit={handleSubmit}
+      onClose={handleClose}
+    >
       <DialogTitle>학습 예약하기</DialogTitle>
       <DialogContent>
         <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
@@ -79,7 +84,9 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
         />
 
         <FormControlLabel
-          control={<Switch checked={isShowDetails} onChange={handleShowDetails} />}
+          control={
+            <Switch checked={isShowDetails} onChange={handleShowDetails} />
+          }
           label="상세 설정"
         />
         <Collapse in={isShowDetails}>
@@ -99,14 +106,24 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
             ))}
             <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
               <InputLabel>CUDA 사용</InputLabel>
-              <Select id="device" name="device" label="CUDA 사용" defaultValue={"cuda"}>
+              <Select
+                id="device"
+                name="device"
+                label="CUDA 사용"
+                defaultValue={"cuda"}
+              >
                 <MenuItem value={"cuda"}>사용</MenuItem>
                 <MenuItem value={"cpu"}>미사용</MenuItem>
               </Select>
             </FormControl>
             <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
               <InputLabel>AMP 사용</InputLabel>
-              <Select id="use_amp" name="use_amp" label="AMP 사용" defaultValue={"false"}>
+              <Select
+                id="use_amp"
+                name="use_amp"
+                label="AMP 사용"
+                defaultValue={"false"}
+              >
                 <MenuItem value={"true"}>사용</MenuItem>
                 <MenuItem value={"false"}>미사용</MenuItem>
               </Select>

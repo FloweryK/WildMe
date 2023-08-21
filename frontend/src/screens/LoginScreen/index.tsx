@@ -191,7 +191,14 @@ export default function LoginScreen() {
           <Grid container>
             <Grid item xs>
               <FormControlLabel
-                control={<Checkbox id="signup" name="signup" value="signup" color="primary" />}
+                control={
+                  <Checkbox
+                    id="signup"
+                    name="signup"
+                    value="signup"
+                    color="primary"
+                  />
+                }
                 label="가입하고 로그인하기"
               />
             </Grid>
@@ -209,7 +216,12 @@ export default function LoginScreen() {
               />
             </Grid>
           </Grid>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
             로그인
           </Button>
         </Box>

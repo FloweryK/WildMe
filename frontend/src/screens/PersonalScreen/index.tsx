@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
-import { ToastContext } from "common/Toast";
 import { getSchedule, reserveSchedule } from "api/personal";
 import { GetScheduleResponse } from "api/personal/interface";
-import EmptyCard from "./components/EmptyCard";
-import ReserveFormDialog from "./components/ReserveFormDialog";
+import { ToastContext } from "common/Toast";
 import Header from "./components/Header";
+import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
+import ReserveFormDialog from "./components/ReserveFormDialog";
 
 export default function PersonalScreen() {
   const navigate = useNavigate();
@@ -34,7 +34,9 @@ export default function PersonalScreen() {
     setOpenDialog(false);
   };
 
-  const handleSubmitSchedule = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitSchedule = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
     // reserve and update schedule

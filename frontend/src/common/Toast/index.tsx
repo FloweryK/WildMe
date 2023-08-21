@@ -2,7 +2,9 @@ import { createContext } from "react";
 import { Alert, Snackbar } from "@mui/material";
 import { ToastContextInterface, ToastProps } from "./interface";
 
-export const ToastContext = createContext<ToastContextInterface>({} as ToastContextInterface);
+export const ToastContext = createContext<ToastContextInterface>(
+  {} as ToastContextInterface
+);
 
 export const Toast = ({ open, severity, text, handleClose }: ToastProps) => {
   return (

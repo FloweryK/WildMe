@@ -10,7 +10,11 @@ const Header = () => {
   };
 
   return (
-    <Button onClick={handleGoBack} color="primary" startIcon={<ArrowBackIcon />}>
+    <Button
+      onClick={handleGoBack}
+      color="primary"
+      startIcon={<ArrowBackIcon />}
+    >
       뒤로가기
     </Button>
   );

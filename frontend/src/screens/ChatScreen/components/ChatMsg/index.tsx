@@ -1,5 +1,5 @@
-import { Avatar, Grid, Typography } from "@mui/material";
 import { styled } from "styled-components";
+import { Avatar, Grid, Typography } from "@mui/material";
 import { defaultTheme } from "common/theme";
 import { ChatMsgInterface } from "./interface";
 
@@ -72,7 +72,12 @@ const ChatMsg = (props: ChatMsgInterface) => {
             <Avatar src={avatar} />
           </Grid>
         )}
-        <Grid item xs={8} className={side} sx={{ display: "flex", flexDirection: "column" }}>
+        <Grid
+          item
+          xs={8}
+          className={side}
+          sx={{ display: "flex", flexDirection: "column" }}
+        >
           {messages.map((msg, i) => (
             <Typography key={`${msg}-${i}`}>{msg}</Typography>
           ))}

@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Box, Container, TextField } from "@mui/material";
+import Header from "./components/Header";
 import ChatMsg from "./components/ChatMsg";
 import { ChatMsgInterface } from "./components/ChatMsg/interface";
-import Header from "./components/Header";
 
 const tmpChatMsgs: ChatMsgInterface[] = [
   {
