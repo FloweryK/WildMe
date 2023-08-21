@@ -4,7 +4,7 @@ import datetime
 from flask import Blueprint, g, request, jsonify
 from app.constants.status_code import *
 from app.decorator import login_required
-from db.database import database
+from db.database import db_user
 
 
 class ScheduleBluePrint(Blueprint):
@@ -49,7 +49,7 @@ class ScheduleBluePrint(Blueprint):
         }
 
         # file path
-        dir_user = os.path.join(database.path_fs, user['name'])
+        dir_user = os.path.join(db_user.path_fs, user['name'])
         path_data = os.path.join(dir_user, 'data.txt')
         path_vocab = os.path.join(dir_user, 'vocab.model')
         path_config = os.path.join(dir_user, 'config.json')
@@ -64,11 +64,11 @@ class ScheduleBluePrint(Blueprint):
         user['speaker'] = speaker
         user['reserve_timestamp'] = datetime.datetime.now().timestamp()
         user['reserve_status'] = 'reserved'
-        user = database.update(where={"name": user['name']}, row=user)
+        user = db_user.update(where={"name": user['name']}, row=user)
 
         # upload to db
         os.makedirs(dir_user, exist_ok=True)
-        database.fs_upload(f, path_data)
+        db_user.fs_upload(f, path_data)
 
         # upload config as json
         with open(path_config, 'w') as j:
@@ -79,7 +79,7 @@ class ScheduleBluePrint(Blueprint):
     @login_required
     def read(self):
         user = g.user
-        schedule = database.select_all()
+        schedule = db_user.select_all()
         schedule = [{
             'name': s['name'],
             'filename': s['filename'],
@@ -93,7 +93,7 @@ class ScheduleBluePrint(Blueprint):
         # update user
         user = g.user
         user['reserve_status'] = 'stop'
-        user = database.update(where={"name": user['name']}, row=user)
+        user = db_user.update(where={"name": user['name']}, row=user)
 
         return {"message": "Deleted"}, OK
     
@@ -108,7 +108,7 @@ class ScheduleBluePrint(Blueprint):
         user['speaker'] = None
         user['reserve_timestamp'] = None
         user['reserve_status'] = None
-        user = database.update(where={"name": user['name']}, row=user)
+        user = db_user.update(where={"name": user['name']}, row=user)
 
         return {"message": "Deleted"}, OK
 

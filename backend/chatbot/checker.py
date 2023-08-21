@@ -10,14 +10,14 @@ from chatbot.model.classifier import Classifier
 from chatbot.utils import WarmupScheduler
 from chatbot.config import Config
 from chatbot.trainer import Trainer
-from db.database import database
+from db.database import db_user
 
 
 class Checker:
     def run(self):
         while True:
             time.sleep(1)
-            schedule = database.select_all()
+            schedule = db_user.select_all()
 
             # check ongoing
             ongoing = [user for user in schedule if user['reserve_status'] == "ongoing"]
@@ -35,7 +35,7 @@ class Checker:
 
             # update user's reserved_status
             user['reserve_status'] = 'ongoing'
-            database.update(where={"name": user['name']}, row=user)
+            db_user.update(where={"name": user['name']}, row=user)
 
             # run training
             try:
@@ -50,13 +50,13 @@ class Checker:
 
                 # update user's reserve_status
                 user['reserve_status'] = 'done'
-                database.update(where={"name": user['name']}, row=user)
+                db_user.update(where={"name": user['name']}, row=user)
             except Exception as e:
                 print(e)
 
                 # update user's reserve_status 
                 user['reserve_status'] = 'failed'
-                database.update(where={"name": user['name']}, row=user)
+                db_user.update(where={"name": user['name']}, row=user)
 
 
     def train(self, path_data, path_config, path_vocab, path_weight, prefix, speaker):
@@ -98,6 +98,6 @@ class Checker:
             trainer.run_epoch(epoch, testloader, device=config.device, train=False, use_amp=config.use_amp, n_accum=config.n_accum)
 
             # check stop sign
-            user = database.select({"name": prefix})
+            user = db_user.select({"name": prefix})
             if user['reserve_status'] == 'stop':
                 break

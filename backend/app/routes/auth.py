@@ -3,7 +3,7 @@ import jwt
 import bcrypt
 from flask import Blueprint, request, jsonify, current_app
 from app.constants.status_code import *
-from db.database import database
+from db.database import db_user
 
 
 class AuthBluePrint(Blueprint):
@@ -24,14 +24,14 @@ class AuthBluePrint(Blueprint):
             return {'message': 'Both name and password are required'}, BAD_REQUEST
         
         # check if the user's name already exists
-        if database.select(where={"name": name}):
+        if db_user.select(where={"name": name}):
             return {'message': 'Name already exists'}, CONFLICT
         
         # encrypt password
         password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         # insert user
-        user = database.insert({
+        user = db_user.insert({
             'name': name,
             'password': password,
         })
@@ -45,7 +45,7 @@ class AuthBluePrint(Blueprint):
         password = str(request.json['password'])
 
         # get user data
-        user = database.select(where={"name": name}, show_credentials=True)
+        user = db_user.select(where={"name": name}, show_credentials=True)
 
         # check if the user exists
         if not user:

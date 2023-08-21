@@ -3,7 +3,7 @@ import jwt
 from functools import wraps
 from flask import request, g, current_app
 from app.constants.status_code import *
-from db.database import database
+from db.database import db_user
 
 
 def login_required(func):
@@ -25,7 +25,7 @@ def login_required(func):
                 return {'message': 'Unauthorized access'}, UNAUTHORIZED
 
             # get user
-            user = database.select(where={"name": payload["name"]})
+            user = db_user.select(where={"name": payload["name"]})
 
             # check if the access token is expired
             if (user is None) or (payload['expire_timestamp'] < datetime.datetime.now().timestamp()):

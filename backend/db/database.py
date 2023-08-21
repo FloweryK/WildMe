@@ -86,7 +86,7 @@ class Database:
             file.write(data_encrypted)
 
 
-database = Database(
+db_user = Database(
     schema=[
         "id",
         "name",
