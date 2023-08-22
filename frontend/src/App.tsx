@@ -4,17 +4,17 @@ import { CookiesProvider } from "react-cookie";
 import { CssBaseline } from "@mui/material";
 import { AuthProvider, AuthWrapper } from "common/auth";
 import { Toast, ToastContext } from "common/Toast";
-import { ToastStateInterface } from "common/Toast/interface";
+import { ToastProps } from "common/Toast/interface";
 import ErrorBoundary from "common/ErrorBoundary";
 import LoginScreen from "screens/LoginScreen";
 import PersonalScreen from "screens/PersonalScreen";
 import ChatScreen from "screens/ChatScreen";
 
 const App = () => {
-  const [toastState, setToastState] = useState<ToastStateInterface>({
-    isToastOpen: false,
-    toastSeverity: "success",
-    toastText: "",
+  const [toastState, setToastState] = useState<ToastProps>({
+    open: false,
+    severity: "success",
+    text: "",
   });
 
   const handleClose = (
@@ -22,9 +22,10 @@ const App = () => {
     reason?: string
   ) => {
     if (reason === "clickaway") {
+      setToastState({ ...toastState, open: false });
       return;
     }
-    setToastState({ ...toastState, isToastOpen: false });
+    setToastState({ ...toastState, open: false });
   };
 
   return (
@@ -32,9 +33,9 @@ const App = () => {
       <CssBaseline />
       <ErrorBoundary>
         <Toast
-          open={toastState.isToastOpen}
-          severity={toastState.toastSeverity}
-          text={toastState.toastText}
+          open={toastState.open}
+          severity={toastState.severity}
+          text={toastState.text}
           handleClose={handleClose}
         />
         <ToastContext.Provider value={{ setToastState }}>

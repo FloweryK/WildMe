@@ -6,7 +6,7 @@ import {
   DeleteScheduleRequest,
   GetScheduleResponse,
 } from "api/personal/interface";
-import { ToastContext } from "common/Toast";
+import { ToastContext, toastStates } from "common/Toast";
 import Header from "./components/Header";
 import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
@@ -28,12 +28,8 @@ const PersonalScreen = () => {
 
   const handleRefreshSchedule = async () => {
     getSchedule().then((response) => {
+      setToastState(toastStates.SUCCESS_REFRESH);
       setSchedules(response);
-    });
-    setToastState({
-      isToastOpen: true,
-      toastSeverity: "success",
-      toastText: "새로고침 완료",
     });
   };
 

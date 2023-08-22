@@ -12,43 +12,9 @@ import {
 } from "@mui/material";
 import { AuthRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
-import { ToastContext } from "common/Toast";
+import { ToastContext, toastStates } from "common/Toast";
 import Header from "./components/Header";
 import Copyright from "common/Copyright";
-import { LoginStateInterface } from "./interface";
-
-const LOGIN_STATES: { [key in string]: LoginStateInterface } = {
-  successSignup: {
-    toastText: "회원가입 성공",
-    toastSeverity: "success",
-    isNameError: false,
-    isPasswordError: false,
-  },
-  successSignin: {
-    toastText: "로그인 성공",
-    toastSeverity: "success",
-    isNameError: false,
-    isPasswordError: false,
-  },
-  invalidName: {
-    toastText: "아이디를 확인해주세요!",
-    toastSeverity: "error",
-    isNameError: true,
-    isPasswordError: false,
-  },
-  invalidPassword: {
-    toastText: "비밀번호를 확인해주세요!",
-    toastSeverity: "error",
-    isNameError: false,
-    isPasswordError: true,
-  },
-  duplicatedName: {
-    toastText: "이미 존재하는 아이디에요!",
-    toastSeverity: "error",
-    isNameError: true,
-    isPasswordError: false,
-  },
-};
 
 const LoginScreen = () => {
   const navigate = useNavigate();
@@ -58,18 +24,6 @@ const LoginScreen = () => {
     isNameError: false,
     isPasswordError: false,
   });
-
-  const changeState = (state: LoginStateInterface) => {
-    setToastState({
-      isToastOpen: true,
-      toastSeverity: state.toastSeverity,
-      toastText: state.toastText,
-    });
-    setAuthState({
-      isNameError: state.isNameError,
-      isPasswordError: state.isPasswordError,
-    });
-  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -85,10 +39,12 @@ const LoginScreen = () => {
 
     // check invalid name or password
     if (name === undefined) {
-      changeState(LOGIN_STATES.invalidName);
+      setToastState(toastStates.INVALID_NAME);
+      setAuthState({ isNameError: true, isPasswordError: false });
       return;
     } else if (password === undefined) {
-      changeState(LOGIN_STATES.invalidPassword);
+      setToastState(toastStates.INVALID_PASSWORD);
+      setAuthState({ isNameError: false, isPasswordError: true });
       return;
     }
 
@@ -102,11 +58,13 @@ const LoginScreen = () => {
     if (isSignup) {
       await signUp(data)
         .then((response) => {
-          changeState(LOGIN_STATES.successSignup);
+          setToastState(toastStates.SUCCESS_SIGNUP);
+          setAuthState({ isNameError: false, isPasswordError: false });
         })
         .catch((error) => {
           if (error.response.status === 409) {
-            changeState(LOGIN_STATES.duplicatedName);
+            setToastState(toastStates.DUPLICATED_NAME);
+            setAuthState({ isNameError: true, isPasswordError: false });
             isDuplicated = true;
           }
         });
@@ -116,14 +74,17 @@ const LoginScreen = () => {
     if (!isDuplicated) {
       await signIn(data)
         .then((response) => {
-          changeState(LOGIN_STATES.successSignin);
+          setToastState(toastStates.SUCCESS_SIGNIN);
+          setAuthState({ isNameError: false, isPasswordError: false });
           setCookie("accessToken", response.Authorization);
         })
         .catch((error) => {
           if (error.response.status === 404) {
-            changeState(LOGIN_STATES.invalidName);
+            setToastState(toastStates.INVALID_NAME);
+            setAuthState({ isNameError: true, isPasswordError: false });
           } else if (error.response.status === 401) {
-            changeState(LOGIN_STATES.invalidPassword);
+            setToastState(toastStates.INVALID_PASSWORD);
+            setAuthState({ isNameError: false, isPasswordError: true });
           }
         });
     }

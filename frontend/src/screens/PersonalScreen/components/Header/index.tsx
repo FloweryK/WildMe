@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import { Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { ToastContext } from "common/Toast";
+import { ToastContext, toastStates } from "common/Toast";
 import { HeaderProps } from "./interface";
 
 const Header = (props: HeaderProps) => {
@@ -13,11 +13,7 @@ const Header = (props: HeaderProps) => {
 
   const handleLogout = () => {
     removeCookie("accessToken");
-    setToastState({
-      isToastOpen: true,
-      toastSeverity: "success",
-      toastText: "로그아웃 완료",
-    });
+    setToastState(toastStates.SUCCESS_LOGOUT);
   };
 
   useEffect(() => {
