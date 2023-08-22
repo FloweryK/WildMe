@@ -15,6 +15,7 @@ import { signIn, signUp } from "api/login";
 import { ToastContext, toastStates } from "common/Toast";
 import Header from "./components/Header";
 import Copyright from "common/Copyright";
+import { status } from "common/status";
 
 const LoginScreen = () => {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ const LoginScreen = () => {
           setAuthState({ isNameError: false, isPasswordError: false });
         })
         .catch((error) => {
-          if (error.response.status === 409) {
+          if (error.response.status === status.CONFLICT) {
             setToastState(toastStates.DUPLICATED_NAME);
             setAuthState({ isNameError: true, isPasswordError: false });
             isDuplicated = true;
@@ -79,10 +80,10 @@ const LoginScreen = () => {
           setCookie("accessToken", response.Authorization);
         })
         .catch((error) => {
-          if (error.response.status === 404) {
+          if (error.response.status === status.NOT_FOUND) {
             setToastState(toastStates.INVALID_NAME);
             setAuthState({ isNameError: true, isPasswordError: false });
-          } else if (error.response.status === 401) {
+          } else if (error.response.status === status.UNAUTUHORIZED) {
             setToastState(toastStates.INVALID_PASSWORD);
             setAuthState({ isNameError: false, isPasswordError: true });
           }
