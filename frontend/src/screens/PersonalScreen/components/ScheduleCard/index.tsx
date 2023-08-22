@@ -7,6 +7,7 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
+import StopIcon from "@mui/icons-material/Stop";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ScheduleCardProps } from "./interface";
 
@@ -18,7 +19,7 @@ const StyledScheduleCard = styled.div`
 `;
 
 const ScheduleCard = (props: ScheduleCardProps) => {
-  const { schedule, onClick, onDelete } = props;
+  const { schedule, onClick, onStop, onDelete } = props;
 
   const date = new Date(schedule.reserve_timestamp * 1000).toLocaleString();
 
@@ -46,6 +47,7 @@ const ScheduleCard = (props: ScheduleCardProps) => {
           </CardContent>
         </CardActionArea>
         <CardActions>
+          <Button onClick={onStop} color="primary" startIcon={<StopIcon />} />
           <Button
             onClick={onDelete}
             color="primary"

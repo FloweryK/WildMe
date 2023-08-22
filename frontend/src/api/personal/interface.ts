@@ -18,6 +18,10 @@ export interface GetScheduleResponse {
   tag: string;
 }
 
+export interface StopScheduleRequest {
+  tag: string;
+}
+
 export interface DeleteScheduleRequest {
   tag: string;
 }
