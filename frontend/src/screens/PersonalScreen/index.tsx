@@ -12,6 +12,7 @@ import {
   GetScheduleResponse,
   StopScheduleRequest,
 } from "api/personal/interface";
+import { ChatContext } from "App";
 import { ToastContext, toastStates } from "common/Toast";
 import Header from "./components/Header";
 import EmptyCard from "./components/EmptyCard";
@@ -21,6 +22,7 @@ import ReserveFormDialog from "./components/ReserveFormDialog";
 const PersonalScreen = () => {
   const navigate = useNavigate();
   const { setToastState } = useContext(ToastContext);
+  const { setTag } = useContext(ChatContext);
   const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>([]);
 
@@ -53,7 +55,8 @@ const PersonalScreen = () => {
     setSchedules(await getSchedule());
   };
 
-  const handleClickSchedule = () => {
+  const handleClickSchedule = (schedule: GetScheduleResponse) => {
+    setTag(schedule.tag);
     navigate("/auth/chat");
   };
 
@@ -94,7 +97,7 @@ const PersonalScreen = () => {
         <ScheduleCard
           key={schedule.reserve_timestamp}
           schedule={schedule}
-          onClick={handleClickSchedule}
+          onClick={() => handleClickSchedule(schedule)}
           onStop={() => handleStopSchedule(schedule)}
           onDelete={() => handleDeleteSchedule(schedule)}
         />

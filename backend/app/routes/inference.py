@@ -3,6 +3,7 @@ from app.constants.status_code import *
 from app.decorator import login_required
 from chatbot.chatbot import Chatbot
 from chatbot.config import Config
+from db.database import db_schedule
 
 
 class InferenceBluePrint(Blueprint):
@@ -14,13 +15,14 @@ class InferenceBluePrint(Blueprint):
     @login_required
     def chat(self):
         # extract data
+        tag = str(request.json['tag'])
         text = str(request.json['text'])
-        
-        # get paths
-        user = g.user
-        path_vocab = user['path_vocab']
-        path_config = user['path_config']
-        path_weight = user['path_weight']
+
+        # get model
+        schedule = db_schedule.select(where={"tag": tag})
+        path_vocab = schedule['path_vocab']
+        path_config = schedule['path_config']
+        path_weight = schedule['path_weight']
 
         if (not path_vocab) or (not path_weight):
             return {"message": "Not trained yet"}, BAD_REQUEST

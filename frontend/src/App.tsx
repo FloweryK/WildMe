@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
 import { CssBaseline } from "@mui/material";
@@ -10,7 +10,12 @@ import LoginScreen from "screens/LoginScreen";
 import PersonalScreen from "screens/PersonalScreen";
 import ChatScreen from "screens/ChatScreen";
 
+export const ChatContext = createContext<any>(undefined);
+
 const App = () => {
+  // tmp context for tag
+  const [tag, setTag] = useState<string>("");
+
   const [toastState, setToastState] = useState<ToastProps>({
     open: false,
     severity: "success",
@@ -42,13 +47,15 @@ const App = () => {
           <CookiesProvider>
             <AuthProvider>
               <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<LoginScreen />} />
-                  <Route path="/auth" element={<AuthWrapper />}>
-                    <Route path="personal" element={<PersonalScreen />} />
-                    <Route path="chat" element={<ChatScreen />} />
-                  </Route>
-                </Routes>
+                <ChatContext.Provider value={{ tag, setTag }}>
+                  <Routes>
+                    <Route path="/" element={<LoginScreen />} />
+                    <Route path="/auth" element={<AuthWrapper />}>
+                      <Route path="personal" element={<PersonalScreen />} />
+                      <Route path="chat" element={<ChatScreen />} />
+                    </Route>
+                  </Routes>
+                </ChatContext.Provider>
               </BrowserRouter>
             </AuthProvider>
           </CookiesProvider>

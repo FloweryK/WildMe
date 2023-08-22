@@ -1,6 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { Box, Container, TextField } from "@mui/material";
+import { ChatContext } from "App";
+import { getChat } from "api/inference";
+import { ChatRequest } from "api/inference/interface";
 import Header from "./components/Header";
 import ChatMsg from "./components/ChatMsg";
 import { ChatMsgInterface } from "./components/ChatMsg/interface";
@@ -21,20 +24,12 @@ const tmpChatMsgs: ChatMsgInterface[] = [
   {
     avatar: "",
     side: "left",
-    messages: [
-      "hello from the otherside",
-      "at least i can say that ive tried.",
-      "and tell you im sorry for breaking your heart",
-    ],
-  },
-  {
-    avatar: "",
-    side: "right",
-    messages: ["wtf man"],
+    messages: ["대화를 입력해보세요 :)"],
   },
 ];
 
 const ChatScreen = () => {
+  const { tag } = useContext(ChatContext);
   const [inputValue, setInputValue] = useState<string>("");
   const [chatMsgs, setChatMsgs] = useState<ChatMsgInterface[]>(tmpChatMsgs);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -50,7 +45,24 @@ const ChatScreen = () => {
         side: "right" as const,
         messages: [inputValue],
       };
-      setChatMsgs([...chatMsgs, newChatMsg]);
+      setChatMsgs((prevChatMsgs) => [...prevChatMsgs, newChatMsg]);
+
+      // make data
+      const data: ChatRequest = {
+        tag: tag,
+        text: inputValue,
+      };
+
+      // send chat request
+      getChat(data).then((response) => {
+        const newChatMsg = {
+          avatar: "",
+          side: "left" as const,
+          messages: [response.message],
+        };
+
+        setChatMsgs((prevChatMsgs) => [...prevChatMsgs, newChatMsg]);
+      });
     }
   };
 
