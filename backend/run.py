@@ -1,7 +1,7 @@
 import os
 import argparse
 import threading
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from app.routes.home import HomeBluePrint
@@ -17,8 +17,17 @@ if __name__ == '__main__':
 
     # app settings
     app = Flask(__name__)
+    app = Flask(__name__, static_folder='build/')
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
     CORS(app)
+
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve(path):
+        if path != '' and os.path.exists(app.static_folder + '/' + path):
+            return send_from_directory(app.static_folder, path)
+        else:
+            return send_from_directory(app.static_folder, 'index.html')
 
     # blueprints
     app.register_blueprint(HomeBluePrint('home', __name__), url_prefix='/')
