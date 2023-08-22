@@ -62,6 +62,34 @@ class Database:
         return rows if show_credentials else [self.hide_credentials(row) for row in rows]
 
     @update
+    def delete(self, where):
+        rows = [row for row in self.data.values() if sum([row[col] != value for col, value in where.items()]) == 0]
+        for row in rows:
+            del self.data[str(row['id'])]
+            
+            # if it's schedule, remove corresponding files
+            if 'tag' in row:
+                try:
+                    os.remove(row["path_data"])
+                except OSError:
+                    pass
+                
+                try:
+                    os.remove(row["path_vocab"])
+                except OSError:
+                    pass
+                
+                try:
+                    os.remove(row["path_config"])
+                except OSError:
+                    pass
+                
+                try:
+                    os.remove(row["path_weight"])
+                except OSError:
+                    pass
+
+    @update
     def update(self, where, row):
         self.check_schema(row)
 
@@ -71,9 +99,8 @@ class Database:
                     self.data[i][col] = value
 
                 return self.hide_credentials(self.data[i])
-        
         return None
-    
+
     def fs_upload(self, f, path):
         with open(path, 'w') as file:
             # flask filestroage -> python file object

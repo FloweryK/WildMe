@@ -15,4 +15,9 @@ export interface GetScheduleResponse {
   filename: string;
   reserve_status: string;
   reserve_timestamp: number;
+  tag: string;
+}
+
+export interface DeleteScheduleRequest {
+  tag: string;
 }

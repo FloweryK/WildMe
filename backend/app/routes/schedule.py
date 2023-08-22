@@ -108,3 +108,13 @@ class ScheduleBluePrint(Blueprint):
         db_schedule.update(where={"tag": tag}, row=schedule)
         
         return {"message": "Deleted"}, OK
+    
+    @login_required
+    def delete(self):
+        # extract data
+        tag = str(request.json['tag'])
+
+        # find schedule
+        db_schedule.delete(where={"tag": tag})
+
+        return {"message": "Deleted"}, OK

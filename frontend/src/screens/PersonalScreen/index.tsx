@@ -1,8 +1,11 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
-import { getSchedule, reserveSchedule } from "api/personal";
-import { GetScheduleResponse } from "api/personal/interface";
+import { deleteSchedule, getSchedule, reserveSchedule } from "api/personal";
+import {
+  DeleteScheduleRequest,
+  GetScheduleResponse,
+} from "api/personal/interface";
 import { ToastContext } from "common/Toast";
 import Header from "./components/Header";
 import EmptyCard from "./components/EmptyCard";
@@ -52,6 +55,18 @@ const PersonalScreen = () => {
     navigate("/auth/chat");
   };
 
+  const handleDeleteSchedule = async (schedule: GetScheduleResponse) => {
+    // make request data
+    const data: DeleteScheduleRequest = {
+      tag: schedule.tag.toString(),
+    };
+
+    // send delete request
+    deleteSchedule(data).then((response) => {
+      handleRefreshSchedule();
+    });
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Header onRefresh={handleRefreshSchedule} />
@@ -66,6 +81,7 @@ const PersonalScreen = () => {
           key={schedule.reserve_timestamp}
           schedule={schedule}
           onClick={handleClickSchedule}
+          onDelete={() => handleDeleteSchedule(schedule)}
         />
       ))}
     </Container>
