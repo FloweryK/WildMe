@@ -38,13 +38,13 @@ const PersonalScreen = () => {
   ) => {
     event.preventDefault();
 
+    // close dialog
+    setOpenDialog(false);
+
     // reserve and update schedule
     const formdata = new FormData(event.currentTarget);
     await reserveSchedule(formdata);
     setSchedules(await getSchedule());
-
-    // close dialog
-    setOpenDialog(false);
   };
 
   const handleClickSchedule = () => {
