@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -9,14 +10,13 @@ import {
   Grid,
   TextField,
 } from "@mui/material";
-import { AuthRequest } from "api/login/interface";
+import { authStore, toastStore, tokenStore } from "store";
+import { SignRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
 import { toastStates } from "common/Toast";
-import Header from "./components/Header";
 import Copyright from "common/Copyright";
 import { status } from "common/status";
-import { authStore, toastStore, tokenStore } from "store";
-import { observer } from "mobx-react";
+import Header from "./components/Header";
 
 const LoginScreen = () => {
   const navigate = useNavigate();
@@ -31,7 +31,6 @@ const LoginScreen = () => {
     const name = formdata.get("name");
     const password = formdata.get("password");
     const isSignup = formdata.get("signup");
-    let isDuplicated = false;
 
     // check invalid name or password
     if (name === undefined) {
@@ -53,15 +52,15 @@ const LoginScreen = () => {
     }
 
     // make request data
-    const data: AuthRequest = {
+    const request: SignRequest = {
       name: name!.toString(),
       password: password!.toString(),
     };
 
     // send signup request if needed
     if (isSignup) {
-      await signUp(data)
-        .then((response) => {
+      await signUp(request)
+        .then((data) => {
           toastStore.setToast(toastStates.SUCCESS_SIGNUP);
           authStore.setInputState({
             isNameError: false,
@@ -70,7 +69,7 @@ const LoginScreen = () => {
           });
         })
         .catch((error) => {
-          if (error.response.status === status.CONFLICT) {
+          if (error.response?.status === status.CONFLICT) {
             toastStore.setToast(toastStates.DUPLICATED_NAME);
             authStore.setInputState({
               isNameError: true,
@@ -79,29 +78,35 @@ const LoginScreen = () => {
             });
           }
         });
+    } else {
+      authStore.setInputState({
+        isNameError: false,
+        isPasswordError: false,
+        isDuplicated: false,
+      });
     }
 
     // send signin request if needed
-    if (!isDuplicated) {
-      await signIn(data)
-        .then((response) => {
+    if (!authStore.isDuplicated) {
+      await signIn(request)
+        .then((data) => {
           toastStore.setToast(toastStates.SUCCESS_SIGNIN);
           authStore.setInputState({
             isNameError: false,
             isPasswordError: false,
             isDuplicated: false,
           });
-          tokenStore.setAccessToken(response.Authorization);
+          tokenStore.setAccessToken(data.Authorization);
         })
         .catch((error) => {
-          if (error.response.status === status.NOT_FOUND) {
+          if (error.response?.status === status.NOT_FOUND) {
             toastStore.setToast(toastStates.INVALID_NAME);
             authStore.setInputState({
               isNameError: true,
               isPasswordError: false,
               isDuplicated: false,
             });
-          } else if (error.response.status === status.UNAUTUHORIZED) {
+          } else if (error.response?.status === status.UNAUTUHORIZED) {
             toastStore.setToast(toastStates.INVALID_PASSWORD);
             authStore.setInputState({
               isNameError: false,

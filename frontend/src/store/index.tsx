@@ -51,7 +51,8 @@ class AuthStore {
 
   setInputState(state: any) {
     this.isNameError = state.isNameError;
-    this.isPasswordError = state.isPasswordErro;
+    this.isPasswordError = state.isPasswordError;
+    this.isDuplicated = state.isDuplicated;
   }
 }
 

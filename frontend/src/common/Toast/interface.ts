@@ -4,7 +4,3 @@ export interface ToastProps {
   text: string;
   handleClose?: any;
 }
-
-export interface ToastContextInterface {
-  setToastState: React.Dispatch<React.SetStateAction<ToastProps>>;
-}

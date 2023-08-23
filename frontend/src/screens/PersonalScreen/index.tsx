@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { observer } from "mobx-react";
 import { Container } from "@mui/material";
 import { chatStore, toastStore } from "store";
 import {
@@ -18,7 +19,6 @@ import Header from "./components/Header";
 import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
-import { observer } from "mobx-react";
 
 const PersonalScreen = () => {
   const navigate = useNavigate();
@@ -34,9 +34,9 @@ const PersonalScreen = () => {
   };
 
   const handleRefreshSchedule = async () => {
-    getSchedule().then((response) => {
+    getSchedule().then((data) => {
       toastStore.setToast(toastStates.SUCCESS_REFRESH);
-      setSchedules(response);
+      setSchedules(data);
     });
   };
 
@@ -48,39 +48,41 @@ const PersonalScreen = () => {
     // close dialog
     setOpenDialog(false);
 
-    // reserve and update schedule
-    const formdata = new FormData(event.currentTarget);
-    await reserveSchedule(formdata);
-    setSchedules(await getSchedule());
-  };
+    // reserve
+    const request = new FormData(event.currentTarget);
+    await reserveSchedule(request);
 
-  const handleClickSchedule = (schedule: GetScheduleResponse) => {
-    chatStore.setTag(schedule.tag);
-    navigate("/auth/chat");
+    // update
+    setSchedules(await getSchedule());
   };
 
   const handleStopSchedule = async (schedule: GetScheduleResponse) => {
     // make request data
-    const data: StopScheduleRequest = {
+    const request: StopScheduleRequest = {
       tag: schedule.tag.toString(),
     };
 
     // send stop request
-    stopSchedule(data).then((response) => {
+    stopSchedule(request).then((data) => {
       handleRefreshSchedule();
     });
   };
 
   const handleDeleteSchedule = async (schedule: GetScheduleResponse) => {
     // make request data
-    const data: DeleteScheduleRequest = {
+    const request: DeleteScheduleRequest = {
       tag: schedule.tag.toString(),
     };
 
     // send delete request
-    deleteSchedule(data).then((response) => {
+    deleteSchedule(request).then((data) => {
       handleRefreshSchedule();
     });
+  };
+
+  const handleClickSchedule = (schedule: GetScheduleResponse) => {
+    chatStore.setTag(schedule.tag);
+    navigate("/auth/chat");
   };
 
   return (

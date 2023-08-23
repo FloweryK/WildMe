@@ -1,31 +1,14 @@
-import { AxiosResponse, AxiosError } from "axios";
-import { AuthRequest, SignInResponse, SignUpResponse } from "./interface";
+import { SignInResponse, SignRequest, SignUpResponse } from "./interface";
 import instance from "../instance";
 
-async function signIn(data: AuthRequest): Promise<SignInResponse> {
-  try {
-    const response: AxiosResponse<SignInResponse> = await instance.post(
-      `auth/signin`,
-      data
-    );
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    throw axiosError;
-  }
-}
+const signUp = async (request: SignRequest): Promise<SignUpResponse> => {
+  const response = await instance.post("auth/signup", request);
+  return response.data;
+};
 
-async function signUp(data: AuthRequest): Promise<SignUpResponse> {
-  try {
-    const response: AxiosResponse<SignUpResponse> = await instance.post(
-      `auth/signup`,
-      data
-    );
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    throw axiosError;
-  }
-}
+const signIn = async (request: SignRequest): Promise<SignInResponse> => {
+  const response = await instance.post("auth/signin", request);
+  return response.data;
+};
 
 export { signIn, signUp };

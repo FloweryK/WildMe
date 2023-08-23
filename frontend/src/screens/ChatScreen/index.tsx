@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
+import { observer } from "mobx-react";
 import { Box, Container, TextField } from "@mui/material";
+import { chatStore } from "store";
 import { getChat } from "api/inference";
 import { ChatRequest } from "api/inference/interface";
 import Header from "./components/Header";
 import ChatMsg from "./components/ChatMsg";
 import { ChatMsgInterface } from "./components/ChatMsg/interface";
-import { chatStore } from "store";
-import { observer } from "mobx-react";
 
 const StyledChatScreen = styled.div`
   .header {
@@ -48,13 +48,13 @@ const ChatScreen = () => {
       setChatMsgs((prevChatMsgs) => [...prevChatMsgs, newChatMsg]);
 
       // make data
-      const data: ChatRequest = {
+      const request: ChatRequest = {
         tag: chatStore.tag,
         text: inputValue,
       };
 
       // send chat request
-      getChat(data).then((response) => {
+      getChat(request).then((response) => {
         const newChatMsg = {
           avatar: "",
           side: "left" as const,
