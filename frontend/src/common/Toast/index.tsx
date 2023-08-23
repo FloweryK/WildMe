@@ -12,6 +12,16 @@ export const Toast = ({ open, severity, text, handleClose }: ToastProps) => {
 };
 
 export const toastStates = {
+  UNAUTHORIZED: {
+    open: true,
+    text: "권한이 없습니다.",
+    severity: "error",
+  },
+  INTERNAL_SERVER_ERROR: {
+    open: true,
+    text: "잠시 후 다시 시도해주세요!",
+    severity: "error",
+  },
   SUCCESS_SIGNUP: {
     open: true,
     text: "회원가입 성공",

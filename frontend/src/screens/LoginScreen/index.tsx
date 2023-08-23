@@ -90,6 +90,7 @@ const LoginScreen = () => {
     if (!authStore.isDuplicated) {
       await signIn(request)
         .then((data) => {
+          console.log(request);
           toastStore.setToast(toastStates.SUCCESS_SIGNIN);
           authStore.setInputState({
             isNameError: false,
@@ -106,7 +107,7 @@ const LoginScreen = () => {
               isPasswordError: false,
               isDuplicated: false,
             });
-          } else if (error.response?.status === status.UNAUTUHORIZED) {
+          } else if (error.response?.status === status.UNAUTHORIZED) {
             toastStore.setToast(toastStates.INVALID_PASSWORD);
             authStore.setInputState({
               isNameError: false,
