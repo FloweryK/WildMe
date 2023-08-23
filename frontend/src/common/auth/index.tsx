@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import { AuthContextType, AuthProviderProps } from "./interface";
+import { tokenStore } from "store";
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
@@ -15,8 +15,7 @@ const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
-  const isAuthenticated = !!cookies.accessToken;
+  const isAuthenticated = !!tokenStore.accessToken;
   return (
     <AuthContext.Provider value={{ isAuthenticated }}>
       {children}

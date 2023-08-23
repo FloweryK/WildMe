@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -12,19 +11,15 @@ import {
 } from "@mui/material";
 import { AuthRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
-import { ToastContext, toastStates } from "common/Toast";
+import { toastStates } from "common/Toast";
 import Header from "./components/Header";
 import Copyright from "common/Copyright";
 import { status } from "common/status";
+import { authStore, toastStore, tokenStore } from "store";
+import { observer } from "mobx-react";
 
 const LoginScreen = () => {
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
-  const { setToastState } = useContext(ToastContext);
-  const [authState, setAuthState] = useState({
-    isNameError: false,
-    isPasswordError: false,
-  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,12 +35,20 @@ const LoginScreen = () => {
 
     // check invalid name or password
     if (name === undefined) {
-      setToastState(toastStates.INVALID_NAME);
-      setAuthState({ isNameError: true, isPasswordError: false });
+      toastStore.setToast(toastStates.INVALID_NAME);
+      authStore.setInputState({
+        isNameError: true,
+        isPasswordError: false,
+        isDuplicated: false,
+      });
       return;
     } else if (password === undefined) {
-      setToastState(toastStates.INVALID_PASSWORD);
-      setAuthState({ isNameError: false, isPasswordError: true });
+      toastStore.setToast(toastStates.INVALID_PASSWORD);
+      authStore.setInputState({
+        isNameError: false,
+        isPasswordError: true,
+        isDuplicated: false,
+      });
       return;
     }
 
@@ -59,14 +62,21 @@ const LoginScreen = () => {
     if (isSignup) {
       await signUp(data)
         .then((response) => {
-          setToastState(toastStates.SUCCESS_SIGNUP);
-          setAuthState({ isNameError: false, isPasswordError: false });
+          toastStore.setToast(toastStates.SUCCESS_SIGNUP);
+          authStore.setInputState({
+            isNameError: false,
+            isPasswordError: false,
+            isDuplicated: false,
+          });
         })
         .catch((error) => {
           if (error.response.status === status.CONFLICT) {
-            setToastState(toastStates.DUPLICATED_NAME);
-            setAuthState({ isNameError: true, isPasswordError: false });
-            isDuplicated = true;
+            toastStore.setToast(toastStates.DUPLICATED_NAME);
+            authStore.setInputState({
+              isNameError: true,
+              isPasswordError: false,
+              isDuplicated: true,
+            });
           }
         });
     }
@@ -75,27 +85,39 @@ const LoginScreen = () => {
     if (!isDuplicated) {
       await signIn(data)
         .then((response) => {
-          setToastState(toastStates.SUCCESS_SIGNIN);
-          setAuthState({ isNameError: false, isPasswordError: false });
-          setCookie("accessToken", response.Authorization);
+          toastStore.setToast(toastStates.SUCCESS_SIGNIN);
+          authStore.setInputState({
+            isNameError: false,
+            isPasswordError: false,
+            isDuplicated: false,
+          });
+          tokenStore.setAccessToken(response.Authorization);
         })
         .catch((error) => {
           if (error.response.status === status.NOT_FOUND) {
-            setToastState(toastStates.INVALID_NAME);
-            setAuthState({ isNameError: true, isPasswordError: false });
+            toastStore.setToast(toastStates.INVALID_NAME);
+            authStore.setInputState({
+              isNameError: true,
+              isPasswordError: false,
+              isDuplicated: false,
+            });
           } else if (error.response.status === status.UNAUTUHORIZED) {
-            setToastState(toastStates.INVALID_PASSWORD);
-            setAuthState({ isNameError: false, isPasswordError: true });
+            toastStore.setToast(toastStates.INVALID_PASSWORD);
+            authStore.setInputState({
+              isNameError: false,
+              isPasswordError: true,
+              isDuplicated: false,
+            });
           }
         });
     }
   };
 
   useEffect(() => {
-    if (cookies.accessToken) {
+    if (tokenStore.accessToken) {
       navigate("/auth/personal");
     }
-  }, [cookies.accessToken]);
+  }, [tokenStore.accessToken]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -118,7 +140,7 @@ const LoginScreen = () => {
               fullWidth
               autoFocus
               autoComplete="name"
-              error={authState.isNameError}
+              error={authStore.isNameError}
               margin="normal"
             />
             <TextField
@@ -128,7 +150,7 @@ const LoginScreen = () => {
               label="비밀번호"
               required
               autoComplete="current-password"
-              error={authState.isPasswordError}
+              error={authStore.isPasswordError}
               margin="normal"
               fullWidth
             />
@@ -176,4 +198,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default observer(LoginScreen);

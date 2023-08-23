@@ -1,16 +1,14 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { Cookies } from "react-cookie";
-import { ChatRequest, ChatResponse } from "./interface";
+import { tokenStore } from "store";
 import instance from "api/instance";
+import { ChatRequest, ChatResponse } from "./interface";
 
 export async function getChat(data: ChatRequest): Promise<ChatResponse> {
-  const cookies = new Cookies();
-
   try {
     const response: AxiosResponse<ChatResponse> = await instance.post(
       `inference/chat`,
       data,
-      { headers: { Authorization: cookies.get("accessToken") } }
+      { headers: { Authorization: tokenStore.accessToken } }
     );
     return response.data;
   } catch (error) {

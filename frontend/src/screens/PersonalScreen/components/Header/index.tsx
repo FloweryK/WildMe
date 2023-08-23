@@ -1,19 +1,18 @@
-import { useContext, useEffect } from "react";
-import { useCookies } from "react-cookie";
+import { useEffect } from "react";
 import { Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { ToastContext, toastStates } from "common/Toast";
+import { toastStates } from "common/Toast";
 import { HeaderProps } from "./interface";
+import { toastStore, tokenStore } from "store";
+import { observer } from "mobx-react";
 
 const Header = (props: HeaderProps) => {
   const { onRefresh } = props;
-  const { setToastState } = useContext(ToastContext);
-  const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
 
   const handleLogout = () => {
-    removeCookie("accessToken");
-    setToastState(toastStates.SUCCESS_LOGOUT);
+    tokenStore.setAccessToken("");
+    toastStore.setToast(toastStates.SUCCESS_LOGOUT);
   };
 
   useEffect(() => {
@@ -32,4 +31,4 @@ const Header = (props: HeaderProps) => {
   );
 };
 
-export default Header;
+export default observer(Header);

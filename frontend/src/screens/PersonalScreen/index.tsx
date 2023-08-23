@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
+import { chatStore, toastStore } from "store";
 import {
   deleteSchedule,
   getSchedule,
@@ -12,17 +13,15 @@ import {
   GetScheduleResponse,
   StopScheduleRequest,
 } from "api/personal/interface";
-import { ChatContext } from "App";
-import { ToastContext, toastStates } from "common/Toast";
+import { toastStates } from "common/Toast";
 import Header from "./components/Header";
 import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
+import { observer } from "mobx-react";
 
 const PersonalScreen = () => {
   const navigate = useNavigate();
-  const { setToastState } = useContext(ToastContext);
-  const { setTag } = useContext(ChatContext);
   const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>([]);
 
@@ -36,7 +35,7 @@ const PersonalScreen = () => {
 
   const handleRefreshSchedule = async () => {
     getSchedule().then((response) => {
-      setToastState(toastStates.SUCCESS_REFRESH);
+      toastStore.setToast(toastStates.SUCCESS_REFRESH);
       setSchedules(response);
     });
   };
@@ -56,7 +55,7 @@ const PersonalScreen = () => {
   };
 
   const handleClickSchedule = (schedule: GetScheduleResponse) => {
-    setTag(schedule.tag);
+    chatStore.setTag(schedule.tag);
     navigate("/auth/chat");
   };
 
@@ -106,4 +105,4 @@ const PersonalScreen = () => {
   );
 };
 
-export default PersonalScreen;
+export default observer(PersonalScreen);
