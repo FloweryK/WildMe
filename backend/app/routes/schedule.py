@@ -29,7 +29,6 @@ class ScheduleBluePrint(Blueprint):
 
         # extract config
         config = {
-            "data_type":        str(request.form['data_type']),
             "n_vocab" :         int(request.form['n_vocab']),
             "n_seq" :           int(request.form['n_seq']),
             "n_layer" :         int(request.form['n_layer']),

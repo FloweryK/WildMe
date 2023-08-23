@@ -53,23 +53,11 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
     >
       <DialogTitle>학습 예약하기</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
-          <InputLabel>텍스트 추출 경로</InputLabel>
-          <Select
-            id="data_type"
-            name="data_type"
-            label="텍스트 추출 경로"
-            defaultValue={"kakaotalk_mobile"}
-          >
-            <MenuItem value={"kakaotalk_mobile"}>카카오톡 모바일</MenuItem>
-            <MenuItem value={"kakaotalk_pc"}>카카오톡 PC</MenuItem>
-          </Select>
-        </FormControl>
         <Input
           id="file"
           name="file"
           type="file"
-          inputProps={{ accept: ".txt" }}
+          inputProps={{ accept: ".txt,.csv" }}
           fullWidth
           required
         />

@@ -65,7 +65,7 @@ class Checker:
         config = Config(path_config)
 
         # dataset
-        dataset = KakaotalkDataset(config.data_type, config.n_vocab, path_data, path_vocab, speaker)
+        dataset = KakaotalkDataset(config.n_vocab, path_data, path_vocab, speaker)
         train_size = int(config.r_split * len(dataset))
         trainset, testset = random_split(dataset, [train_size, len(dataset) - train_size])
 

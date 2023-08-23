@@ -3,31 +3,37 @@ from chatbot.dataset.base import ChatDatasetBase
 from db.crypt import crypt
 
 
-# extract logics for kakaotalk mobile
-def is_chat(line, data_type):
-    if data_type == "kakaotalk_mobile":
-        pattern = r"^\d{4}년 \d{1,2}월 \d{1,2}일 (?:오전|오후) \d{1,2}:\d{2},"
-        return bool(re.search(pattern, line))
-    else:
-        pattern = r"^\[(.*?)\].*?\[(.*?)\]"
-        return bool(re.findall(pattern, line))
+def extract_chat_pc_windows(line):
+    pattern = r"^\[(.*?)\].*?\[(.*?)\]"
+    speaker, t = re.findall(pattern, line)[0]
+    text = re.sub(pattern, '', line)[1:-1]
+    return speaker, text
 
+def extract_chat_pc_mac(line):
+    line = ','.join(line.split(',')[1:])
+    speaker = line.split(',')[0][1:-1]
+    text = line.split(',')[1][1:-1]
+    return speaker, text
 
-def extract_chat(line, data_type):
-    if data_type == "kakaotalk_mobile":
-        # extract date
-        pattern = r"^\d{4}년 \d{1,2}월 \d{1,2}일 (?:오전|오후) \d{1,2}:\d{2},"
-        date = re.findall(pattern, line)[0][:-1]
-        line = re.sub(pattern, '', line)[1:-1]
+def extract_chat_mobile_android(line):
+    # extract date
+    pattern = r"^\d{4}년 \d{1,2}월 \d{1,2}일 (?:오전|오후) \d{1,2}:\d{2},"
+    date = re.findall(pattern, line)[0][:-1]
+    line = re.sub(pattern, '', line)[1:-1]
 
-        # extract speaker and text
-        pattern = r".+ : "
-        speaker = re.findall(pattern, line)[0][:-3]
-        text = re.sub(pattern, '', line)
-    else:
-        pattern = r"^\[(.*?)\].*?\[(.*?)\]"
-        speaker, t = re.findall(pattern, line)[0]
-        text = re.sub(pattern, '', line)[1:-1]
+    # extract speaker and text
+    pattern = r".+ : "
+    speaker = re.findall(pattern, line)[0][:-3]
+    text = re.sub(pattern, '', line)
+    return speaker, text
+
+def extract_chat_mobile_ios(line):
+    line = ','.join(line.split(',')[1:])
+    speaker = line.split(':')[0].strip()
+    text = ','.join(line.split(':')[1:]).strip()
+
+    if (speaker[0] == '"') and (speaker[-1] == '"'):
+        raise IndexError()
 
     return speaker, text
 
@@ -42,13 +48,7 @@ def is_picture(text):
 
 
 class KakaotalkDataset(ChatDatasetBase):
-    def __init__(self, data_type, n_vocab, path_data, path_vocab, speaker=None):
-        # data_type
-        self.data_type = data_type
-        
-        if self.data_type not in ['kakaotalk_mobile', 'kakaotalk_pc']:
-            raise KeyError(f"Invalid data_type: {data_type}")
-
+    def __init__(self, n_vocab, path_data, path_vocab, speaker=None):
         # base initialization
         super().__init__(n_vocab, path_data, path_vocab)
         
@@ -59,40 +59,42 @@ class KakaotalkDataset(ChatDatasetBase):
 
 
     def load_data(self, path_data):
-        with open(path_data, 'r', encoding="utf8") as f:
-            # decrypt data
-            data = crypt.decrypt(f.read()).split('\n')
+        for func in [extract_chat_pc_windows, extract_chat_pc_mac, extract_chat_mobile_android, extract_chat_mobile_ios]:
+            with open(path_data, 'r', encoding="utf8") as f:
+                # decrypt data
+                data = crypt.decrypt(f.read()).split('\n')
 
-            i_prev = None
-            speaker_prev = None
+                tmp = {}
+                i_prev = None
+                speaker_prev = None
 
-            for i, line in enumerate(data):
-                if not is_chat(line, self.data_type):
-                    continue
+                for i, line in enumerate(data):
+                    # extract chat
+                    try:
+                        speaker, text = func(line)
+                    except IndexError:
+                        # TMP exception for passing '\n' in lines
+                        continue
 
-                # extract chat
-                try:
-                    speaker, text = extract_chat(line, self.data_type)
-                except IndexError:
-                    # TMP exception for passing '\n' in lines
-                    continue
+                    if is_emoticon(text):
+                        continue
+                    if is_picture(text):
+                        continue
 
-                if is_emoticon(text):
-                    continue
-                if is_picture(text):
-                    continue
+                    # add chat into data
+                    if (i_prev is None) or (speaker_prev != speaker):
+                        tmp[i] = {
+                            'id': i,
+                            'speaker_name': speaker,
+                            'text': [text],
+                            'question_id': i_prev,
+                            'question_speaker_name': speaker_prev,
+                        }
+                        i_prev = i
+                    else:
+                        tmp[i_prev]['text'].append(text)
 
-                # add chat into data
-                if (i_prev is None) or (speaker_prev != speaker):
-                    self.data[i] = {
-                        'id': i,
-                        'speaker_name': speaker,
-                        'text': [text],
-                        'question_id': i_prev,
-                        'question_speaker_name': speaker_prev,
-                    }
-                    i_prev = i
-                else:
-                    self.data[i_prev]['text'].append(text)
-
-                speaker_prev = speaker
+                    speaker_prev = speaker
+                
+                if len(self.data) < len(tmp):
+                    self.data = tmp
