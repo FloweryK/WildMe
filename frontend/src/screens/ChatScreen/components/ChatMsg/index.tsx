@@ -6,6 +6,10 @@ import { ChatMsgInterface } from "./interface";
 const RADIUS = "32px";
 
 const StyledChatMsg = styled.div`
+  .chatMsgContainer {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
   p {
     text-align: left;
     margin-bottom: 4px;
@@ -64,6 +68,7 @@ const ChatMsg = (props: ChatMsgInterface) => {
   return (
     <StyledChatMsg>
       <Grid
+        className="chatMsgContainer"
         container
         spacing={2}
         justifyContent={side === "right" ? "flex-end" : "flex-start"}

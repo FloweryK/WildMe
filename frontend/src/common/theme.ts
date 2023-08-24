@@ -7,7 +7,7 @@ export const defaultTheme = createTheme({
       // main: "#FFA53B",
     },
     secondary: {
-      main: "rgba(242, 242, 242, 0.6)",
+      main: "rgba(242, 242, 242, 0.7)",
     },
   },
 });

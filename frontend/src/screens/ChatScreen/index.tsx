@@ -13,7 +13,7 @@ const StyledChatScreen = styled.div`
   .header {
   }
   .chat {
-    height: 500px;
+    height: 600px;
     overflow: auto;
   }
   .textfield {
