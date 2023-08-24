@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const Header = () => {
@@ -10,13 +10,15 @@ const Header = () => {
   };
 
   return (
-    <Button
-      onClick={handleGoBack}
-      color="primary"
-      startIcon={<ArrowBackIcon />}
-    >
-      뒤로가기
-    </Button>
+    <Box>
+      <Button
+        onClick={handleGoBack}
+        color="primary"
+        startIcon={<ArrowBackIcon />}
+      >
+        뒤로가기
+      </Button>
+    </Box>
   );
 };
 

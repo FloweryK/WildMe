@@ -139,7 +139,7 @@ const LoginScreen = () => {
       }}
     >
       <Container maxWidth="xs">
-        <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+        <Paper sx={{ marginTop: 3, padding: 2 }}>
           <Header />
           <Box
             component="form"

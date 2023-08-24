@@ -1,13 +1,9 @@
 import { styled } from "styled-components";
-import { Card, CardActionArea, CardContent } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { EmptyCardProps } from "./interface";
 
 const StyledEmptyCard = styled.div`
-  .card {
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
   .cardContent {
     display: flex;
     flex-direction: column;
@@ -22,15 +18,17 @@ const EmptyCard = (props: EmptyCardProps) => {
   const { onClick } = props;
 
   return (
-    <StyledEmptyCard>
-      <Card variant="outlined" className="card">
-        <CardActionArea onClick={onClick}>
-          <CardContent className="cardContent">
-            <AddIcon />
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </StyledEmptyCard>
+    <Box {...props}>
+      <StyledEmptyCard>
+        <Card variant="outlined" className="card">
+          <CardActionArea onClick={onClick}>
+            <CardContent className="cardContent">
+              <AddIcon />
+            </CardContent>
+          </CardActionArea>
+        </Card>
+      </StyledEmptyCard>
+    </Box>
   );
 };
 

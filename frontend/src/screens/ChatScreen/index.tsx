@@ -1,25 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { styled } from "styled-components";
 import { observer } from "mobx-react";
-import { Box, Container, TextField } from "@mui/material";
+import { Box, Button, Container, Grid, Paper, TextField } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import { chatStore } from "store";
 import { getChat } from "api/inference";
 import { ChatRequest } from "api/inference/interface";
 import Header from "./components/Header";
 import ChatMsg from "./components/ChatMsg";
 import { ChatMsgInterface } from "./components/ChatMsg/interface";
-
-const StyledChatScreen = styled.div`
-  .header {
-  }
-  .chat {
-    height: 600px;
-    overflow: auto;
-  }
-  .textfield {
-    padding-right: 10px;
-  }
-`;
 
 const tmpChatMsgs: ChatMsgInterface[] = [
   {
@@ -33,13 +21,14 @@ const ChatScreen = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [chatMsgs, setChatMsgs] = useState<ChatMsgInterface[]>(tmpChatMsgs);
   const messagesRef = useRef<HTMLDivElement>(null);
+  const textFieldRef = useRef<HTMLInputElement | null>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleSubmit = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" && inputValue) {
+  const handleSubmit = () => {
+    if (!!inputValue) {
       const newChatMsg = {
         avatar: "",
         side: "right" as const,
@@ -63,6 +52,15 @@ const ChatScreen = () => {
 
         setChatMsgs((prevChatMsgs) => [...prevChatMsgs, newChatMsg]);
       });
+
+      // focus on textfield
+      textFieldRef.current?.focus();
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" && !!inputValue) {
+      handleSubmit();
     }
   };
 
@@ -75,33 +73,56 @@ const ChatScreen = () => {
   }, [chatMsgs]);
 
   return (
-    <Container maxWidth="xs">
-      <StyledChatScreen>
-        <Header />
-        <Box className="chat" ref={messagesRef}>
-          {chatMsgs?.map(({ avatar, side, messages }, i) => (
-            <ChatMsg avatar={avatar} side={side} messages={messages} />
-          ))}
+    <Grid container>
+      <Container maxWidth="xs">
+        <Box sx={{ marginTop: 3 }}>
+          <Header />
+          <Paper sx={{ padding: 2 }}>
+            <Box
+              sx={{ height: "600px", overflow: "auto", marginBottom: 1 }}
+              ref={messagesRef}
+            >
+              {chatMsgs?.map(({ avatar, side, messages }, i) => (
+                <ChatMsg avatar={avatar} side={side} messages={messages} />
+              ))}
+            </Box>
+            <Grid container spacing={1}>
+              <Grid item xs={10.5}>
+                <TextField
+                  inputRef={textFieldRef}
+                  label="대화를 입력하세요"
+                  variant="outlined"
+                  // multiline
+                  fullWidth
+                  autoFocus
+                  size="small"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  InputProps={{
+                    style: {
+                      maxHeight: "100%",
+                      overflow: "hidden",
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={0.5}>
+                <Button
+                  sx={{
+                    minWidth: "0px",
+                    height: "100%",
+                  }}
+                  onClick={handleSubmit}
+                >
+                  <SendIcon />
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
         </Box>
-        <TextField
-          className="textfield"
-          label="대화를 입력하세요"
-          variant="outlined"
-          // multiline
-          fullWidth
-          size="small"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleSubmit}
-          InputProps={{
-            style: {
-              maxHeight: "100%",
-              overflow: "hidden",
-            },
-          }}
-        />
-      </StyledChatScreen>
-    </Container>
+      </Container>
+    </Grid>
   );
 };
 

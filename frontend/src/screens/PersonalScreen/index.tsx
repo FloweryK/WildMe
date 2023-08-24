@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { Box, Container, Grid, Paper } from "@mui/material";
@@ -85,10 +85,14 @@ const PersonalScreen = () => {
     navigate("/auth/chat");
   };
 
+  useEffect(() => {
+    handleRefreshSchedule();
+  }, []);
+
   return (
     <Grid container>
       <Container maxWidth="xs">
-        <Box sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+        <Box sx={{ marginTop: 3 }}>
           <Header onRefresh={handleRefreshSchedule} />
           <ReserveFormDialog
             open={isOpenDialog}

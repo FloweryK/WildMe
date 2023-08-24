@@ -15,12 +15,8 @@ const Header = (props: HeaderProps) => {
     toastStore.setToast(toastStates.SUCCESS_LOGOUT);
   };
 
-  useEffect(() => {
-    onRefresh();
-  }, []);
-
   return (
-    <Box>
+    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Button onClick={handleLogout} startIcon={<LogoutIcon />}>
         로그아웃
       </Button>

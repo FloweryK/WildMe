@@ -1,3 +1,5 @@
-export interface EmptyCardProps {
+import { BoxProps } from "@mui/material";
+
+export interface EmptyCardProps extends BoxProps {
   onClick: any;
 }
