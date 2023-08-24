@@ -110,7 +110,7 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
                 id="use_amp"
                 name="use_amp"
                 label="AMP 사용"
-                defaultValue={"false"}
+                defaultValue={"true"}
               >
                 <MenuItem value={"true"}>사용</MenuItem>
                 <MenuItem value={"false"}>미사용</MenuItem>
