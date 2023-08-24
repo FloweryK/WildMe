@@ -17,6 +17,17 @@ const StyledScheduleCard = styled.div`
     margin-bottom: 10px;
   }
 `;
+const secondsToHMS = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.round(seconds) % 60;
+
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+};
 
 const ScheduleCard = (props: ScheduleCardProps) => {
   const { schedule, onClick, onStop, onDelete } = props;
@@ -36,17 +47,17 @@ const ScheduleCard = (props: ScheduleCardProps) => {
               {schedule.name}
             </Typography>
             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              {schedule.reserve_status}
+              예약 날짜: {date}
               <br />
-              {date}
+              파일 이름: {schedule.filename}
               <br />
-              {schedule.filename}
+              학습 상태: {schedule.reserve_status}
               <br />
-              {schedule.tag}
+              학습 태그: {schedule.tag}
               <br />
-              {schedule.i_epoch + 1} / {schedule.n_epoch}
+              학습 진행도: {schedule.i_epoch + 1} / {schedule.n_epoch}
               <br />
-              {schedule.ETA}
+              남은 시간: {secondsToHMS(schedule.ETA)}
             </Typography>
           </CardContent>
         </CardActionArea>
