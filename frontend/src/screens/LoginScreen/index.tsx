@@ -126,7 +126,7 @@ const LoginScreen = () => {
   }, [tokenStore.accessToken]);
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container maxWidth="xs">
       <Box
         sx={{
           marginTop: 8,
@@ -144,7 +144,6 @@ const LoginScreen = () => {
               label="아이디"
               required
               fullWidth
-              autoFocus
               autoComplete="name"
               error={authStore.isNameError}
               margin="normal"

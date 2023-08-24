@@ -86,7 +86,7 @@ const PersonalScreen = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container maxWidth="xs">
       <Header onRefresh={handleRefreshSchedule} />
       <ReserveFormDialog
         open={isOpenDialog}

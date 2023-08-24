@@ -75,8 +75,8 @@ const ChatScreen = () => {
   }, [chatMsgs]);
 
   return (
-    <StyledChatScreen>
-      <Container component="main" maxWidth="xs">
+    <Container maxWidth="xs">
+      <StyledChatScreen>
         <Header />
         <Box className="chat" ref={messagesRef}>
           {chatMsgs?.map(({ avatar, side, messages }, i) => (
@@ -100,8 +100,8 @@ const ChatScreen = () => {
             },
           }}
         />
-      </Container>
-    </StyledChatScreen>
+      </StyledChatScreen>
+    </Container>
   );
 };
 
