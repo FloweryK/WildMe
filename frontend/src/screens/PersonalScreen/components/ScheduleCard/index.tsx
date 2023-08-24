@@ -53,8 +53,6 @@ const ScheduleCard = (props: ScheduleCardProps) => {
               <br />
               학습 상태: {schedule.reserve_status}
               <br />
-              학습 태그: {schedule.tag}
-              <br />
               학습 진행도: {schedule.i_epoch + 1} / {schedule.n_epoch}
               <br />
               남은 시간: {secondsToHMS(schedule.ETA)}
