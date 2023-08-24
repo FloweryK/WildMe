@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from contextlib import nullcontext
 from chatbot.utils import get_bleu
+from db.database import db_schedule
 
 
 class Trainer:
@@ -16,7 +17,7 @@ class Trainer:
         self.writer = writer
         self.path_weight = path_weight
     
-    def run_epoch(self, epoch, dataloader, device, train=True, use_amp=False, n_accum=1):
+    def run_epoch(self, tag, epoch, dataloader, device, train=True, use_amp=False, n_accum=1):
         losses = []
         times = []
         bleus = []
@@ -81,7 +82,7 @@ class Trainer:
                 pbar.set_postfix_str(f"Loss: {losses[-1]:.2f} ({np.mean(losses):.2f}) | lr: {self.scheduler.get_last_lr()[0]:.2e} | bleu: {np.mean(bleus):.1f} | {memory:.2f}GB | {np.mean(times) * 1000:.0f}ms")
 
             # save model
-            if train:
+            if train and db_schedule.select({"tag": tag}):
                 torch.save(self.model.state_dict(), self.path_weight)
             
             # tensorboard
