@@ -21,10 +21,10 @@ const Header = (props: HeaderProps) => {
 
   return (
     <Box>
-      <Button onClick={handleLogout} color="primary" startIcon={<LogoutIcon />}>
+      <Button onClick={handleLogout} startIcon={<LogoutIcon />}>
         로그아웃
       </Button>
-      <Button onClick={onRefresh} color="primary" startIcon={<RefreshIcon />}>
+      <Button onClick={onRefresh} startIcon={<RefreshIcon />}>
         새로고침
       </Button>
     </Box>

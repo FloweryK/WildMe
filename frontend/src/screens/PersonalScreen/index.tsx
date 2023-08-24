@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Container } from "@mui/material";
+import { Box, Container, Grid, Paper } from "@mui/material";
 import { chatStore, toastStore } from "store";
 import {
   deleteSchedule,
@@ -86,24 +86,28 @@ const PersonalScreen = () => {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Header onRefresh={handleRefreshSchedule} />
-      <ReserveFormDialog
-        open={isOpenDialog}
-        handleSubmit={handleSubmitSchedule}
-        handleClose={handleCloseDialog}
-      />
-      <EmptyCard onClick={handleOpenDialog} />
-      {schedules?.map((schedule) => (
-        <ScheduleCard
-          key={schedule.reserve_timestamp}
-          schedule={schedule}
-          onClick={() => handleClickSchedule(schedule)}
-          onStop={() => handleStopSchedule(schedule)}
-          onDelete={() => handleDeleteSchedule(schedule)}
-        />
-      ))}
-    </Container>
+    <Grid container>
+      <Container maxWidth="xs">
+        <Box sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+          <Header onRefresh={handleRefreshSchedule} />
+          <ReserveFormDialog
+            open={isOpenDialog}
+            handleSubmit={handleSubmitSchedule}
+            handleClose={handleCloseDialog}
+          />
+          <EmptyCard onClick={handleOpenDialog} />
+          {schedules?.map((schedule) => (
+            <ScheduleCard
+              key={schedule.reserve_timestamp}
+              schedule={schedule}
+              onClick={() => handleClickSchedule(schedule)}
+              onStop={() => handleStopSchedule(schedule)}
+              onDelete={() => handleDeleteSchedule(schedule)}
+            />
+          ))}
+        </Box>
+      </Container>
+    </Grid>
   );
 };
 

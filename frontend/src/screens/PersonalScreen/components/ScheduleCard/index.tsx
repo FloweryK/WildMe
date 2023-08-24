@@ -39,14 +39,10 @@ const ScheduleCard = (props: ScheduleCardProps) => {
       <Card className="card" variant="outlined">
         <CardActionArea onClick={onClick}>
           <CardContent>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} gutterBottom>
               {schedule.name}
             </Typography>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            <Typography sx={{ mb: 1.5 }}>
               예약 날짜: {date}
               <br />
               파일 이름: {schedule.filename}
@@ -59,13 +55,9 @@ const ScheduleCard = (props: ScheduleCardProps) => {
             </Typography>
           </CardContent>
         </CardActionArea>
-        <CardActions>
-          <Button onClick={onStop} color="primary" startIcon={<StopIcon />} />
-          <Button
-            onClick={onDelete}
-            color="primary"
-            startIcon={<DeleteIcon />}
-          />
+        <CardActions sx={{ justifyContent: "flex-end" }}>
+          <Button onClick={onStop} startIcon={<StopIcon />} />
+          <Button onClick={onDelete} startIcon={<DeleteIcon />} />
         </CardActions>
       </Card>
     </StyledScheduleCard>
