@@ -27,8 +27,9 @@ class InferenceBluePrint(Blueprint):
         if (not path_vocab) or (not path_weight):
             return {"message": "Not trained yet"}, BAD_REQUEST
         
-        # load config
+        # load config and change cuda config to cpu
         config = Config(path_config)
+        config.device = 'cpu'
 
         # load chatbot
         chatbot = Chatbot(config)
