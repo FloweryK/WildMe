@@ -54,7 +54,7 @@ const ChatScreen = () => {
       });
 
       // focus on textfield
-      textFieldRef.current?.focus();
+      textFieldRef.current?.blur();
     }
   };
 
@@ -94,7 +94,7 @@ const ChatScreen = () => {
                   variant="outlined"
                   // multiline
                   fullWidth
-                  autoFocus
+                  // autoFocus
                   size="small"
                   value={inputValue}
                   onChange={handleInputChange}
