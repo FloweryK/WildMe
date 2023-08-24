@@ -8,14 +8,15 @@ import {
   Container,
   FormControlLabel,
   Grid,
+  Paper,
   TextField,
 } from "@mui/material";
 import { authStore, toastStore, tokenStore } from "store";
 import { SignRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
 import { toastStates } from "common/Toast";
-import Copyright from "common/Copyright";
 import { status } from "common/status";
+import Copyright from "common/Copyright";
 import Header from "./components/Header";
 
 const LoginScreen = () => {
@@ -126,80 +127,90 @@ const LoginScreen = () => {
   }, [tokenStore.accessToken]);
 
   return (
-    <Container maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Header />
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <Box>
-            <TextField
-              id="name"
-              name="name"
-              label="아이디"
-              required
-              fullWidth
-              autoComplete="name"
-              error={authStore.isNameError}
-              margin="normal"
-            />
-            <TextField
-              id="password"
-              name="password"
-              type="password"
-              label="비밀번호"
-              required
-              autoComplete="current-password"
-              error={authStore.isPasswordError}
-              margin="normal"
-              fullWidth
-            />
-          </Box>
-          <Grid container>
-            <Grid item xs>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="signup"
-                    name="signup"
-                    value="signup"
-                    color="primary"
-                  />
-                }
-                label="가입하고 로그인하기"
-              />
-            </Grid>
-            <Grid>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="rememberme"
-                    name="rememberme"
-                    value="remember"
-                    color="primary"
-                  />
-                }
-                label="로그인 기억하기"
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+    <Grid
+      container
+      sx={{
+        backgroundImage: "url(https://source.unsplash.com/random?nightsky)",
+        backgroundRepeat: "no-repeat",
+        backgroundColor: (t) =>
+          t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
+        backgroundSize: "cover",
+        backgroundPosition: "right",
+      }}
+    >
+      <Container maxWidth="xs">
+        <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+          <Header />
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
           >
-            로그인
-          </Button>
-        </Box>
-      </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
-    </Container>
+            <Box>
+              <TextField
+                id="name"
+                name="name"
+                label="아이디"
+                required
+                fullWidth
+                autoComplete="name"
+                error={authStore.isNameError}
+                margin="normal"
+              />
+              <TextField
+                id="password"
+                name="password"
+                type="password"
+                label="비밀번호"
+                required
+                autoComplete="current-password"
+                error={authStore.isPasswordError}
+                margin="normal"
+                fullWidth
+              />
+            </Box>
+            <Grid container>
+              <Grid item xs>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="signup"
+                      name="signup"
+                      value="signup"
+                      color="primary"
+                    />
+                  }
+                  label="가입하고 로그인하기"
+                />
+              </Grid>
+              <Grid>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="rememberme"
+                      name="rememberme"
+                      value="remember"
+                      color="primary"
+                    />
+                  }
+                  label="로그인 기억하기"
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              로그인
+            </Button>
+          </Box>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Paper>
+      </Container>
+    </Grid>
   );
 };
 

@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Grid } from "@mui/material";
 import { AuthProvider, AuthWrapper } from "common/auth";
 import LoginScreen from "./LoginScreen";
 import PersonalScreen from "./PersonalScreen";
@@ -8,7 +8,7 @@ import ChatScreen from "./ChatScreen";
 const Screens = () => {
   return (
     <AuthProvider>
-      <Container sx={{ height: "100vh" }}>
+      <Grid container sx={{ height: "100vh" }}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LoginScreen />} />
@@ -18,7 +18,7 @@ const Screens = () => {
             </Route>
           </Routes>
         </BrowserRouter>
-      </Container>
+      </Grid>
     </AuthProvider>
   );
 };
