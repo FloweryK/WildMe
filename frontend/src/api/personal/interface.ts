@@ -11,11 +11,14 @@ export interface ReserveScheduleResponse {
 }
 
 export interface GetScheduleResponse {
+  tag: string;
   name: string;
   filename: string;
   reserve_status: string;
   reserve_timestamp: number;
-  tag: string;
+  i_epoch: number;
+  n_epoch: number;
+  ETA: number;
 }
 
 export interface StopScheduleRequest {

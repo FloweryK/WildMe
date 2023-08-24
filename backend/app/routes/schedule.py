@@ -68,6 +68,9 @@ class ScheduleBluePrint(Blueprint):
             'speaker': speaker,
             'reserve_timestamp': datetime.datetime.now().timestamp(),
             'reserve_status': 'reserved',
+            'i_epoch': 0,
+            'n_epoch': config['n_epoch'],
+            'ETA': 0,
         }
         db_schedule.insert(schedule)
 
@@ -91,6 +94,9 @@ class ScheduleBluePrint(Blueprint):
             'filename': s['filename'],
             'reserve_status': s['reserve_status'],
             'reserve_timestamp': s['reserve_timestamp'],
+            'i_epoch': s['i_epoch'],
+            'n_epoch': s['n_epoch'],
+            'ETA': s['ETA'],
         } for s in schedule if (s['reserve_status'] != None) and (s['name'] == user['name'])]
         return jsonify(schedule), OK
     

@@ -138,7 +138,10 @@ db_schedule = Database(
         "path_weight",
         "speaker",
         "reserve_timestamp",
-        "reserve_status"
+        "reserve_status",
+        "i_epoch",
+        "n_epoch",
+        "ETA",
     ],
     credentials=[],
     path_fs='db/schedules', 

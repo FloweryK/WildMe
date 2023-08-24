@@ -43,6 +43,10 @@ const ScheduleCard = (props: ScheduleCardProps) => {
               {schedule.filename}
               <br />
               {schedule.tag}
+              <br />
+              {schedule.i_epoch + 1} / {schedule.n_epoch}
+              <br />
+              {schedule.ETA}
             </Typography>
           </CardContent>
         </CardActionArea>
