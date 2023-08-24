@@ -59,6 +59,7 @@ const StyledChatMsg = styled.div`
 
 const ChatMsg = (props: ChatMsgInterface) => {
   const { avatar, messages, side } = props;
+  const messagesSplitted = !!messages ? messages[0].split("[SEP]") : messages;
 
   return (
     <StyledChatMsg>
@@ -78,7 +79,7 @@ const ChatMsg = (props: ChatMsgInterface) => {
           className={side}
           sx={{ display: "flex", flexDirection: "column" }}
         >
-          {messages.map((msg, i) => (
+          {messagesSplitted.map((msg, i) => (
             <Typography key={`${msg}-${i}`}>{msg}</Typography>
           ))}
         </Grid>
