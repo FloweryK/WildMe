@@ -5,6 +5,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { toastStore, tokenStore } from "store";
 import { toastStates } from "common/Toast";
 import { HeaderProps } from "./interface";
+import Logo from "common/Logo";
 
 const Header = (props: HeaderProps) => {
   const { onRefresh } = props;
@@ -21,6 +22,7 @@ const Header = (props: HeaderProps) => {
             <IconButton color="inherit" onClick={handleLogout}>
               <LogoutIcon />
             </IconButton>
+            <Logo />
             <IconButton color="inherit" onClick={onRefresh}>
               <RefreshIcon />
             </IconButton>

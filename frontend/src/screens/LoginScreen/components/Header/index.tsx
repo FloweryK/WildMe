@@ -1,6 +1,7 @@
 import { Avatar, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { styled } from "styled-components";
+import Logo from "common/Logo";
 
 const StyledHeader = styled.div`
   display: flex;
@@ -14,9 +15,7 @@ const Header = () => {
       <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
         <LockOutlinedIcon />
       </Avatar>
-      <Typography component="h1" variant="h5">
-        WildMe
-      </Typography>
+      <Logo sx={{ fontSize: 30 }} />
     </StyledHeader>
   );
 };
