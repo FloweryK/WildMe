@@ -155,6 +155,7 @@ const LoginScreen = () => {
                 required
                 fullWidth
                 autoComplete="name"
+                inputProps={{ autoCapitalize: "none" }}
                 error={authStore.isNameError}
                 margin="normal"
               />
