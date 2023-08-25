@@ -75,52 +75,50 @@ const ChatScreen = () => {
   return (
     <Grid container>
       <Container maxWidth="xs">
-        <Box sx={{ marginTop: 3 }}>
-          <Header />
-          <Paper sx={{ padding: 2 }}>
-            <Box
-              sx={{ height: "600px", overflow: "auto", marginBottom: 1 }}
-              ref={messagesRef}
-            >
-              {chatMsgs?.map(({ avatar, side, messages }, i) => (
-                <ChatMsg avatar={avatar} side={side} messages={messages} />
-              ))}
-            </Box>
-            <Grid container spacing={1}>
-              <Grid item xs={10.5}>
-                <TextField
-                  inputRef={textFieldRef}
-                  label="대화를 입력하세요"
-                  variant="outlined"
-                  // multiline
-                  fullWidth
-                  // autoFocus
-                  size="small"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  InputProps={{
-                    style: {
-                      maxHeight: "100%",
-                      overflow: "hidden",
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={0.5}>
-                <Button
-                  sx={{
-                    minWidth: "0px",
-                    height: "100%",
-                  }}
-                  onClick={handleSubmit}
-                >
-                  <SendIcon />
-                </Button>
-              </Grid>
+        <Header sx={{ marginTop: 3 }} />
+        <Paper sx={{ padding: 2 }}>
+          <Box
+            sx={{ height: "600px", overflow: "auto", marginBottom: 1 }}
+            ref={messagesRef}
+          >
+            {chatMsgs?.map(({ avatar, side, messages }, i) => (
+              <ChatMsg avatar={avatar} side={side} messages={messages} />
+            ))}
+          </Box>
+          <Grid container spacing={1}>
+            <Grid item xs={10.5}>
+              <TextField
+                inputRef={textFieldRef}
+                label="대화를 입력하세요"
+                variant="outlined"
+                // multiline
+                fullWidth
+                // autoFocus
+                size="small"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                InputProps={{
+                  style: {
+                    maxHeight: "100%",
+                    overflow: "hidden",
+                  },
+                }}
+              />
             </Grid>
-          </Paper>
-        </Box>
+            <Grid item xs={0.5}>
+              <Button
+                sx={{
+                  minWidth: "0px",
+                  height: "100%",
+                }}
+                onClick={handleSubmit}
+              >
+                <SendIcon />
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
       </Container>
     </Grid>
   );

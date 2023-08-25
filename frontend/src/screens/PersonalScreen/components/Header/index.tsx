@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -16,13 +15,15 @@ const Header = (props: HeaderProps) => {
   };
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-      <Button onClick={handleLogout} startIcon={<LogoutIcon />}>
-        로그아웃
-      </Button>
-      <Button onClick={onRefresh} startIcon={<RefreshIcon />}>
-        새로고침
-      </Button>
+    <Box {...props}>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Button onClick={handleLogout} startIcon={<LogoutIcon />}>
+          로그아웃
+        </Button>
+        <Button onClick={onRefresh} startIcon={<RefreshIcon />}>
+          새로고침
+        </Button>
+      </Box>
     </Box>
   );
 };

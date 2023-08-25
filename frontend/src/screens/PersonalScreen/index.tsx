@@ -92,24 +92,22 @@ const PersonalScreen = () => {
   return (
     <Grid container>
       <Container maxWidth="xs">
-        <Box sx={{ marginTop: 3 }}>
-          <Header onRefresh={handleRefreshSchedule} />
-          <ReserveFormDialog
-            open={isOpenDialog}
-            handleSubmit={handleSubmitSchedule}
-            handleClose={handleCloseDialog}
+        <Header sx={{ marginTop: 3 }} onRefresh={handleRefreshSchedule} />
+        <ReserveFormDialog
+          open={isOpenDialog}
+          handleSubmit={handleSubmitSchedule}
+          handleClose={handleCloseDialog}
+        />
+        <EmptyCard onClick={handleOpenDialog} />
+        {schedules?.map((schedule) => (
+          <ScheduleCard
+            key={schedule.reserve_timestamp}
+            schedule={schedule}
+            onClick={() => handleClickSchedule(schedule)}
+            onStop={() => handleStopSchedule(schedule)}
+            onDelete={() => handleDeleteSchedule(schedule)}
           />
-          <EmptyCard onClick={handleOpenDialog} />
-          {schedules?.map((schedule) => (
-            <ScheduleCard
-              key={schedule.reserve_timestamp}
-              schedule={schedule}
-              onClick={() => handleClickSchedule(schedule)}
-              onStop={() => handleStopSchedule(schedule)}
-              onDelete={() => handleDeleteSchedule(schedule)}
-            />
-          ))}
-        </Box>
+        ))}
       </Container>
     </Grid>
   );
