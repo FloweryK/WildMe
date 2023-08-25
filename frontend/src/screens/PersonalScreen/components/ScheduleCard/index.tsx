@@ -5,6 +5,7 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
+  IconButton,
   Typography,
 } from "@mui/material";
 import StopIcon from "@mui/icons-material/Stop";
@@ -66,8 +67,12 @@ const ScheduleCard = (props: ScheduleCardProps) => {
           </CardContent>
         </CardActionArea>
         <CardActions sx={{ justifyContent: "flex-end" }}>
-          <Button onClick={onStop} startIcon={<StopIcon />} />
-          <Button onClick={onDelete} startIcon={<DeleteIcon />} />
+          <IconButton onClick={onStop} sx={{ marginRight: 3 }}>
+            <StopIcon color="primary" />
+          </IconButton>
+          <IconButton onClick={onDelete}>
+            <DeleteIcon color="primary" />
+          </IconButton>
         </CardActions>
       </Card>
     </StyledScheduleCard>

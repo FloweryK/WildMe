@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { Box, Button } from "@mui/material";
+import { AppBar, Box, Container, IconButton, Toolbar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { toastStore, tokenStore } from "store";
@@ -13,17 +13,20 @@ const Header = (props: HeaderProps) => {
     tokenStore.setAccessToken("");
     toastStore.setToast(toastStates.SUCCESS_LOGOUT);
   };
-
   return (
-    <Box {...props}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button onClick={handleLogout} startIcon={<LogoutIcon />}>
-          로그아웃
-        </Button>
-        <Button onClick={onRefresh} startIcon={<RefreshIcon />}>
-          새로고침
-        </Button>
-      </Box>
+    <Box sx={{ flexGrow: 1, marginBottom: 8, zIndex: 1000 }}>
+      <AppBar position="fixed">
+        <Container maxWidth="xs">
+          <Toolbar variant="dense" sx={{ justifyContent: "space-between" }}>
+            <IconButton color="inherit" onClick={handleLogout}>
+              <LogoutIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={onRefresh}>
+              <RefreshIcon />
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
     </Box>
   );
 };

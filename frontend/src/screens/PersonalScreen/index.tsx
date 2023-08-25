@@ -98,7 +98,6 @@ const PersonalScreen = () => {
           handleSubmit={handleSubmitSchedule}
           handleClose={handleCloseDialog}
         />
-        <EmptyCard onClick={handleOpenDialog} />
         {schedules?.map((schedule) => (
           <ScheduleCard
             key={schedule.reserve_timestamp}
@@ -108,6 +107,7 @@ const PersonalScreen = () => {
             onDelete={() => handleDeleteSchedule(schedule)}
           />
         ))}
+        <EmptyCard sx={{ marginBottom: 3 }} onClick={handleOpenDialog} />
       </Container>
     </Grid>
   );
