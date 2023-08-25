@@ -136,10 +136,12 @@ const LoginScreen = () => {
           t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
         backgroundSize: "cover",
         backgroundPosition: "right",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Container maxWidth="xs">
-        <Paper sx={{ marginTop: 3, padding: 2 }}>
+        <Paper sx={{ marginBottom: 5, padding: 2 }}>
           <Header />
           <Box
             component="form"
