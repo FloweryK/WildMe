@@ -139,6 +139,7 @@ db_schedule = Database(
         "speaker",
         "reserve_timestamp",
         "reserve_status",
+        "reserve_message",
         "i_epoch",
         "n_epoch",
         "ETA",

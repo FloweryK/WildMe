@@ -56,6 +56,12 @@ const ScheduleCard = (props: ScheduleCardProps) => {
               / {schedule.n_epoch}
               <br />
               남은 시간: {secondsToHMS(schedule.ETA)}
+              {schedule.reserve_message ? (
+                <>
+                  <br />
+                  실패 내용: {schedule.reserve_message}
+                </>
+              ) : null}
             </Typography>
           </CardContent>
         </CardActionArea>

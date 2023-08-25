@@ -94,6 +94,7 @@ class ScheduleBluePrint(Blueprint):
             'filename': s['filename'],
             'reserve_status': s['reserve_status'],
             'reserve_timestamp': s['reserve_timestamp'],
+            'reserve_message': s['reserve_message'],
             'i_epoch': s['i_epoch'],
             'n_epoch': s['n_epoch'],
             'ETA': s['ETA'],
