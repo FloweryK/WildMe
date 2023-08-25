@@ -103,7 +103,12 @@ const ChatScreen = () => {
         />
         <Box ref={messagesRef} sx={{ height: "80vh", overflow: "auto" }}>
           {chatMsgs?.map(({ avatar, side, messages }, i) => (
-            <ChatMsg avatar={avatar} side={side} messages={messages} />
+            <ChatMsg
+              key={`${side}-${i}`}
+              avatar={avatar}
+              side={side}
+              messages={messages}
+            />
           ))}
         </Box>
         <AppBar
