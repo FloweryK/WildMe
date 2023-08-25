@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Box, Container, Grid, Paper } from "@mui/material";
-import { chatStore, toastStore } from "store";
+import { Container, Grid } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { chatStore, toastStore, tokenStore } from "store";
 import {
   deleteSchedule,
   getSchedule,
@@ -14,8 +16,8 @@ import {
   GetScheduleResponse,
   StopScheduleRequest,
 } from "api/personal/interface";
+import Header from "common/Header";
 import { toastStates } from "common/Toast";
-import Header from "./components/Header";
 import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
@@ -31,6 +33,11 @@ const PersonalScreen = () => {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+  };
+
+  const handleLogout = () => {
+    tokenStore.setAccessToken("");
+    toastStore.setToast(toastStates.SUCCESS_LOGOUT);
   };
 
   const handleRefreshSchedule = async () => {
@@ -92,7 +99,12 @@ const PersonalScreen = () => {
   return (
     <Grid container>
       <Container maxWidth="xs">
-        <Header sx={{ marginTop: 3 }} onRefresh={handleRefreshSchedule} />
+        <Header
+          startIcon={<LogoutIcon />}
+          onClickStartIcon={handleLogout}
+          endIcon={<RefreshIcon />}
+          onClickEndIcon={handleRefreshSchedule}
+        />
         <ReserveFormDialog
           open={isOpenDialog}
           handleSubmit={handleSubmitSchedule}

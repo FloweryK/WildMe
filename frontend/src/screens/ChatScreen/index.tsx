@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Box, Button, Container, Grid, Paper, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Paper,
+  TextField,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import SendIcon from "@mui/icons-material/Send";
 import { chatStore } from "store";
 import { getChat } from "api/inference";
+import Header from "common/Header";
 import { ChatRequest } from "api/inference/interface";
-import Header from "./components/Header";
 import ChatMsg from "./components/ChatMsg";
 import { ChatMsgInterface } from "./components/ChatMsg/interface";
 
@@ -18,10 +28,19 @@ const tmpChatMsgs: ChatMsgInterface[] = [
 ];
 
 const ChatScreen = () => {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState<string>("");
   const [chatMsgs, setChatMsgs] = useState<ChatMsgInterface[]>(tmpChatMsgs);
   const messagesRef = useRef<HTMLDivElement>(null);
   const textFieldRef = useRef<HTMLInputElement | null>(null);
+
+  const handleGoBack = () => {
+    navigate("/auth/personal");
+  };
+
+  const handleRefresh = () => {
+    setChatMsgs(tmpChatMsgs);
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -75,50 +94,44 @@ const ChatScreen = () => {
   return (
     <Grid container>
       <Container maxWidth="xs">
-        <Header sx={{ marginTop: 3 }} />
-        <Paper sx={{ padding: 2 }}>
-          <Box
-            sx={{ height: "600px", overflow: "auto", marginBottom: 1 }}
-            ref={messagesRef}
-          >
-            {chatMsgs?.map(({ avatar, side, messages }, i) => (
-              <ChatMsg avatar={avatar} side={side} messages={messages} />
-            ))}
-          </Box>
-          <Grid container spacing={1}>
-            <Grid item xs={10.5}>
-              <TextField
-                inputRef={textFieldRef}
-                label="대화를 입력하세요"
-                variant="outlined"
-                // multiline
-                fullWidth
-                // autoFocus
-                size="small"
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                InputProps={{
-                  style: {
-                    maxHeight: "100%",
-                    overflow: "hidden",
-                  },
-                }}
-              />
-            </Grid>
-            <Grid item xs={0.5}>
-              <Button
-                sx={{
-                  minWidth: "0px",
-                  height: "100%",
-                }}
-                onClick={handleSubmit}
-              >
-                <SendIcon />
-              </Button>
-            </Grid>
+        <Header
+          startIcon={<ArrowBackIcon />}
+          onClickStartIcon={handleGoBack}
+          endIcon={<RefreshIcon />}
+          onClickEndIcon={handleRefresh}
+        />
+        <Box ref={messagesRef} sx={{ height: "70vh", overflow: "auto" }}>
+          {chatMsgs?.map(({ avatar, side, messages }, i) => (
+            <ChatMsg avatar={avatar} side={side} messages={messages} />
+          ))}
+        </Box>
+        <Grid container spacing={1}>
+          <Grid item xs={10.5}>
+            <TextField
+              inputRef={textFieldRef}
+              label="대화를 입력하세요"
+              variant="outlined"
+              // multiline
+              fullWidth
+              // autoFocus
+              size="small"
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              InputProps={{
+                style: {
+                  maxHeight: "100%",
+                  overflow: "hidden",
+                },
+              }}
+            />
           </Grid>
-        </Paper>
+          <Grid item xs={0.5}>
+            <IconButton color="primary" onClick={handleSubmit}>
+              <SendIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
       </Container>
     </Grid>
   );
