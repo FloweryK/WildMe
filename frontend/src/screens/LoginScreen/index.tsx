@@ -91,7 +91,6 @@ const LoginScreen = () => {
     if (!authStore.isDuplicated) {
       await signIn(request)
         .then((data) => {
-          console.log(request);
           toastStore.setToast(toastStates.SUCCESS_SIGNIN);
           authStore.setInputState({
             isNameError: false,
