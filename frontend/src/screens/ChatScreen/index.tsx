@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
 import {
+  AppBar,
   Box,
   Container,
   Grid,
@@ -71,15 +72,15 @@ const ChatScreen = () => {
 
         setChatMsgs((prevChatMsgs) => [...prevChatMsgs, newChatMsg]);
       });
-
-      // focus on textfield
-      textFieldRef.current?.blur();
     }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" && !!inputValue) {
       handleSubmit();
+
+      // blur textfield
+      // textFieldRef.current?.blur();
     }
   };
 
@@ -100,20 +101,31 @@ const ChatScreen = () => {
           endIcon={<RefreshIcon />}
           onClickEndIcon={handleRefresh}
         />
-        <Box ref={messagesRef} sx={{ height: "70vh", overflow: "auto" }}>
+        <Box ref={messagesRef} sx={{ height: "80vh", overflow: "auto" }}>
           {chatMsgs?.map(({ avatar, side, messages }, i) => (
             <ChatMsg avatar={avatar} side={side} messages={messages} />
           ))}
         </Box>
-        <Grid container spacing={1}>
-          <Grid item xs={10.5}>
+        <AppBar
+          color="primary"
+          elevation={0}
+          position="fixed"
+          sx={{ top: "auto", bottom: 0, backgroundColor: "white" }}
+        >
+          <Container
+            maxWidth="xs"
+            sx={{
+              paddingBottom: 2,
+              paddingTop: 1,
+              display: "flex",
+              backgroundColor: "white",
+            }}
+          >
             <TextField
               inputRef={textFieldRef}
               label="대화를 입력하세요"
               variant="outlined"
-              // multiline
               fullWidth
-              // autoFocus
               size="small"
               value={inputValue}
               onChange={handleInputChange}
@@ -122,16 +134,15 @@ const ChatScreen = () => {
                 style: {
                   maxHeight: "100%",
                   overflow: "hidden",
+                  flex: 9,
                 },
               }}
             />
-          </Grid>
-          <Grid item xs={0.5}>
-            <IconButton color="primary" onClick={handleSubmit}>
+            <IconButton color="primary" onClick={handleSubmit} sx={{ flex: 1 }}>
               <SendIcon />
             </IconButton>
-          </Grid>
-        </Grid>
+          </Container>
+        </AppBar>
       </Container>
     </Grid>
   );
