@@ -3,9 +3,9 @@ import { AppBar, Box, Container, IconButton, Toolbar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { toastStore, tokenStore } from "store";
+import Logo from "common/Logo";
 import { toastStates } from "common/Toast";
 import { HeaderProps } from "./interface";
-import Logo from "common/Logo";
 
 const Header = (props: HeaderProps) => {
   const { onRefresh } = props;
