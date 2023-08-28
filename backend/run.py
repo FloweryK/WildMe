@@ -9,7 +9,7 @@ from app.routes.schedule import ScheduleBluePrint
 from app.routes.inference import InferenceBluePrint
 from chatbot.checker import Checker
 
-VALID_REEUQSTS_PREFIX = (
+VALID_REQUESTS_PREFIX = (
     "/static/js",
     "/static/css",
     "/manifest.json",
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     def block_path():
         if ".git" in request.path:
             abort(403)  # Forbidden
-        if not (request.path.startswith(VALID_REEUQSTS_PREFIX) or (request.path in VALID_REQUESTS)):
+        if not (request.path.startswith(VALID_REQUESTS_PREFIX) or (request.path in VALID_REQUESTS)):
             abort(403)
 
     @app.route('/', defaults={'path': ''})
