@@ -58,9 +58,10 @@ class Checker:
 
                 # update user's reserve_status 
                 schedule = db_schedule.select({'tag': schedule['tag']})
-                schedule['reserve_status'] = 'failed'
-                schedule['reserve_message'] = str(e)
-                db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
+                if schedule:
+                    schedule['reserve_status'] = 'failed'
+                    schedule['reserve_message'] = str(e)
+                    db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
 
 
     def train(self, tag, path_data, path_config, path_vocab, path_weight, prefix, speaker):
