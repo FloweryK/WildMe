@@ -1,7 +1,6 @@
 import os
-import argparse
 import threading
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request, abort
 from flask_cors import CORS
 from dotenv import load_dotenv
 from app.routes.home import HomeBluePrint
@@ -9,6 +8,27 @@ from app.routes.auth import AuthBluePrint
 from app.routes.schedule import ScheduleBluePrint
 from app.routes.inference import InferenceBluePrint
 from chatbot.checker import Checker
+
+VALID_REEUQSTS_PREFIX = (
+    "/static/js",
+    "/static/css",
+    "/manifest.json",
+    "/favicon.ico",
+    "/logo192.png",
+    "/logo512.png"
+)
+
+VALID_REQUESTS = (
+    "/", 
+    "/auth/signin",
+    "/auth/signup",
+    "/schedule/reserve", 
+    "/schedule/read", 
+    "/schedule/stop", 
+    "/schedule/delete", 
+    "/inference/chat"
+)
+
 
 
 if __name__ == '__main__':
@@ -20,6 +40,14 @@ if __name__ == '__main__':
     app = Flask(__name__, static_folder='build/')
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
     CORS(app)
+
+    # app routings
+    @app.before_request
+    def block_path():
+        if ".git" in request.path:
+            abort(403)  # Forbidden
+        if not (request.path.startswith(VALID_REEUQSTS_PREFIX) or (request.path in VALID_REQUESTS)):
+            abort(403)
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
