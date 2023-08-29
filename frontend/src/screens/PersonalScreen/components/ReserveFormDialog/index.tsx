@@ -29,7 +29,7 @@ const detailsDefault = [
   { name: "scale", value: 8.0 },
   { name: "r_split", value: 0.9 },
   { name: "n_epoch", value: 50 },
-  { name: "n_batch", value: 16 },
+  { name: "n_batch", value: 32 },
   { name: "n_accum", value: 1 },
   { name: "lr", value: 1e-5 },
   { name: "warmup_steps", value: 4000 },
