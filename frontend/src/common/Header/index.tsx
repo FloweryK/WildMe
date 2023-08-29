@@ -1,5 +1,12 @@
 import { observer } from "mobx-react";
-import { AppBar, Box, Container, Grid, IconButton } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Toolbar,
+} from "@mui/material";
 import Logo from "common/Logo";
 import { HeaderProps } from "./interface";
 import { styled } from "styled-components";
@@ -28,21 +35,23 @@ const Header = (props: HeaderProps) => {
       <Box sx={{ flexGrow: 1, marginBottom: 8, zIndex: 1000 }}>
         <AppBar position="fixed">
           <Container maxWidth="xs">
-            <Grid container>
-              <Grid item xs={4} className="headerGrid left">
-                <IconButton color="inherit" onClick={onClickStartIcon}>
-                  {startIcon}
-                </IconButton>
+            <Toolbar variant="dense">
+              <Grid container>
+                <Grid item xs={4} className="headerGrid left">
+                  <IconButton color="inherit" onClick={onClickStartIcon}>
+                    {startIcon}
+                  </IconButton>
+                </Grid>
+                <Grid item xs={4} className="headerGrid center">
+                  <Logo />
+                </Grid>
+                <Grid item xs={4} className="headerGrid right">
+                  <IconButton color="inherit" onClick={onClickEndIcon}>
+                    {endIcon}
+                  </IconButton>
+                </Grid>
               </Grid>
-              <Grid item xs={4} className="headerGrid center">
-                <Logo />
-              </Grid>
-              <Grid item xs={4} className="headerGrid right">
-                <IconButton color="inherit" onClick={onClickEndIcon}>
-                  {endIcon}
-                </IconButton>
-              </Grid>
-            </Grid>
+            </Toolbar>
           </Container>
         </AppBar>
       </Box>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Box, Container, Grid, IconButton, Typography } from "@mui/material";
+import { Box, Container, Grid, IconButton } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
