@@ -17,7 +17,12 @@ VALID_REQUESTS_PREFIX = (
 )
 
 VALID_REQUESTS = (
+    # Screens
     "/", 
+    "/auth/personal",
+    "/auth/chat",
+
+    # APIS
     "/auth/signin",
     "/auth/signup",
     "/schedule/reserve", 
