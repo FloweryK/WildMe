@@ -4,7 +4,7 @@ import { Cookies } from "react-cookie";
 class Cookie {
   cookies = new Cookies();
 
-  set = (name: string, value: string, options?: any) => {
+  set = (name: string, value: any, options?: any) => {
     return this.cookies.set(name, value, { ...options });
   };
 

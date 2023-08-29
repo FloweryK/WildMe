@@ -32,6 +32,7 @@ const LoginScreen = () => {
     const name = formdata.get("name");
     const password = formdata.get("password");
     const isSignup = formdata.get("signup");
+    const isRememberID = formdata.get("rememberid");
 
     // check invalid name or password
     if (name === undefined) {
@@ -98,6 +99,13 @@ const LoginScreen = () => {
             isDuplicated: false,
           });
           cookie.set("accessToken", data.Authorization);
+          if (isRememberID) {
+            cookie.set("id", request.name);
+            cookie.set("rememberId", true);
+          } else {
+            cookie.remove("id");
+            cookie.remove("rememberId");
+          }
         })
         .catch((error) => {
           if (error.response?.status === status.NOT_FOUND) {
@@ -153,6 +161,7 @@ const LoginScreen = () => {
                 id="name"
                 name="name"
                 label="아이디"
+                defaultValue={cookie.get("id")}
                 required
                 fullWidth
                 autoComplete="name"
@@ -190,13 +199,14 @@ const LoginScreen = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      id="rememberme"
-                      name="rememberme"
-                      value="remember"
+                      id="rememberid"
+                      name="rememberid"
+                      value="rememberid"
                       color="primary"
+                      defaultChecked={!!cookie.get("rememberId")}
                     />
                   }
-                  label="로그인 기억하기"
+                  label="아이디 기억하기"
                 />
               </Grid>
             </Grid>
