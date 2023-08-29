@@ -1,15 +1,20 @@
 import { makeAutoObservable } from "mobx";
+import { Cookies } from "react-cookie";
 
-class TokenStore {
-  accessToken: string = "";
+class Cookie {
+  cookies = new Cookies();
 
-  constructor() {
-    makeAutoObservable(this);
-  }
+  setCookie = (name: string, value: string, options?: any) => {
+    return this.cookies.set(name, value, { ...options });
+  };
 
-  setAccessToken(accessToken: string) {
-    this.accessToken = accessToken;
-  }
+  getCookie = (name: string) => {
+    return this.cookies.get(name);
+  };
+
+  removeCookie = (name: string) => {
+    this.cookies.remove(name);
+  };
 }
 
 class ToastStore {
@@ -68,7 +73,7 @@ class ChatStore {
   }
 }
 
-export const tokenStore = new TokenStore();
+export const cookie = new Cookie();
 export const toastStore = new ToastStore();
 export const authStore = new AuthStore();
 export const chatStore = new ChatStore();

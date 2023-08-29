@@ -15,8 +15,8 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import SendIcon from "@mui/icons-material/Send";
 import { chatStore } from "store";
 import { getChat } from "api/inference";
-import Header from "common/Header";
 import { ChatRequest } from "api/inference/interface";
+import Header from "common/Header";
 import ChatMsg from "./components/ChatMsg";
 import { ChatMsgInterface } from "./components/ChatMsg/interface";
 

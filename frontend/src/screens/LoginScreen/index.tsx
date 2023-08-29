@@ -11,11 +11,12 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { authStore, toastStore, tokenStore } from "store";
+import { authStore, toastStore } from "store";
 import { SignRequest } from "api/login/interface";
 import { signIn, signUp } from "api/login";
 import { toastStates } from "common/Toast";
 import { status } from "common/status";
+import { getCookie, setCookie } from "common/cookie";
 import Copyright from "common/Copyright";
 import Header from "./components/Header";
 
@@ -97,7 +98,7 @@ const LoginScreen = () => {
             isPasswordError: false,
             isDuplicated: false,
           });
-          tokenStore.setAccessToken(data.Authorization);
+          setCookie("accessToken", data.Authorization);
         })
         .catch((error) => {
           if (error.response?.status === status.NOT_FOUND) {
@@ -120,10 +121,10 @@ const LoginScreen = () => {
   };
 
   useEffect(() => {
-    if (tokenStore.accessToken) {
+    if (getCookie("accessToken")) {
       navigate("/auth/personal");
     }
-  }, [tokenStore.accessToken]);
+  }, [getCookie("accessToken")]);
 
   return (
     <Grid
