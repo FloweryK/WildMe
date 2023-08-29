@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { Container, Grid } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { chatStore, toastStore } from "store";
+import { chatStore, cookie, toastStore } from "store";
 import {
   deleteSchedule,
   getSchedule,
@@ -18,7 +18,6 @@ import {
 } from "api/personal/interface";
 import Header from "common/Header";
 import { toastStates } from "common/Toast";
-import { setCookie } from "common/cookie";
 import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
@@ -37,7 +36,7 @@ const PersonalScreen = () => {
   };
 
   const handleLogout = () => {
-    setCookie("accessToken", "");
+    cookie.set("accessToken", "");
     toastStore.setToast(toastStates.SUCCESS_LOGOUT);
   };
 

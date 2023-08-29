@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { getCookie } from "common/cookie";
+import { cookie } from "store";
 import {
   DeleteScheduleRequest,
   GetScheduleResponse,
@@ -11,7 +11,7 @@ import instance from "../instance";
 const reserveSchedule = async (
   request: FormData
 ): Promise<ReserveScheduleResponse> => {
-  const headers = { Authorization: getCookie("accessToken") };
+  const headers = { Authorization: cookie.get("accessToken") };
   const response = await instance.post("schedule/reserve", request, {
     headers: headers,
   });
@@ -19,7 +19,7 @@ const reserveSchedule = async (
 };
 
 const getSchedule = async (): Promise<GetScheduleResponse[]> => {
-  const headers = { Authorization: getCookie("accessToken") };
+  const headers = { Authorization: cookie.get("accessToken") };
   const response = await instance.post(
     "schedule/read",
     {},
@@ -29,7 +29,7 @@ const getSchedule = async (): Promise<GetScheduleResponse[]> => {
 };
 
 const stopSchedule = async (request: StopScheduleRequest): Promise<any> => {
-  const headers = { Authorization: getCookie("accessToken") };
+  const headers = { Authorization: cookie.get("accessToken") };
   const response: AxiosResponse<GetScheduleResponse[]> = await instance.post(
     "schedule/stop",
     request,
@@ -39,7 +39,7 @@ const stopSchedule = async (request: StopScheduleRequest): Promise<any> => {
 };
 
 const deleteSchedule = async (request: DeleteScheduleRequest): Promise<any> => {
-  const headers = { Authorization: getCookie("accessToken") };
+  const headers = { Authorization: cookie.get("accessToken") };
   const response: AxiosResponse<GetScheduleResponse[]> = await instance.post(
     `schedule/delete`,
     request,
