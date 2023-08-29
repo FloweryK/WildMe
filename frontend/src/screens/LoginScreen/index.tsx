@@ -128,7 +128,7 @@ const LoginScreen = () => {
   };
 
   useEffect(() => {
-    if (cookie.get("accessToken")) {
+    if (!!cookie.get("accessToken")) {
       navigate("/auth/personal");
     }
   }, [cookie.get("accessToken")]);

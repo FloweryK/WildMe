@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Container, Grid } from "@mui/material";
+import { Box, Container, Grid, IconButton, Typography } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 import { chatStore, cookie, toastStore } from "store";
 import {
   deleteSchedule,
@@ -21,18 +22,28 @@ import { toastStates } from "common/Toast";
 import EmptyCard from "./components/EmptyCard";
 import ScheduleCard from "./components/ScheduleCard";
 import ReserveFormDialog from "./components/ReserveFormDialog";
+import DeleteFormDialog from "./components/DeleteFormDialog";
 
 const PersonalScreen = () => {
   const navigate = useNavigate();
-  const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
+  const [isOpenReserveForm, setOpenReserveForm] = useState<boolean>(false);
+  const [isOpenDeleteForm, setOpenDeleteForm] = useState<boolean>(false);
   const [schedules, setSchedules] = useState<GetScheduleResponse[]>([]);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
+  const handleOpenReserveForm = () => {
+    setOpenReserveForm(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleCloseReserveForm = () => {
+    setOpenReserveForm(false);
+  };
+
+  const handleOpenDeleteForm = () => {
+    setOpenDeleteForm(true);
+  };
+
+  const handleCloseDeleteForm = () => {
+    setOpenDeleteForm(false);
   };
 
   const handleLogout = () => {
@@ -41,6 +52,7 @@ const PersonalScreen = () => {
   };
 
   const handleRefreshSchedule = async () => {
+    console.log(cookie.get("accessToken"));
     getSchedule().then((data) => {
       toastStore.setToast(toastStates.SUCCESS_REFRESH);
       setSchedules(data);
@@ -53,7 +65,7 @@ const PersonalScreen = () => {
     event.preventDefault();
 
     // close dialog
-    setOpenDialog(false);
+    setOpenReserveForm(false);
 
     // reserve
     const request = new FormData(event.currentTarget);
@@ -99,16 +111,20 @@ const PersonalScreen = () => {
   return (
     <Grid container>
       <Container maxWidth="xs">
+        <ReserveFormDialog
+          open={isOpenReserveForm}
+          handleSubmit={handleSubmitSchedule}
+          handleClose={handleCloseReserveForm}
+        />
+        <DeleteFormDialog
+          open={isOpenDeleteForm}
+          handleClose={handleCloseDeleteForm}
+        />
         <Header
           startIcon={<LogoutIcon />}
           onClickStartIcon={handleLogout}
           endIcon={<RefreshIcon />}
           onClickEndIcon={handleRefreshSchedule}
-        />
-        <ReserveFormDialog
-          open={isOpenDialog}
-          handleSubmit={handleSubmitSchedule}
-          handleClose={handleCloseDialog}
         />
         {schedules?.map((schedule) => (
           <ScheduleCard
@@ -119,7 +135,12 @@ const PersonalScreen = () => {
             onDelete={() => handleDeleteSchedule(schedule)}
           />
         ))}
-        <EmptyCard sx={{ marginBottom: 3 }} onClick={handleOpenDialog} />
+        <EmptyCard sx={{ marginBottom: 3 }} onClick={handleOpenReserveForm} />
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <IconButton onClick={handleOpenDeleteForm}>
+            <PersonOffIcon color="primary" />
+          </IconButton>
+        </Box>
       </Container>
     </Grid>
   );

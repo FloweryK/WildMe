@@ -25,6 +25,7 @@ VALID_REQUESTS = (
     # APIS
     "/auth/signin",
     "/auth/signup",
+    "/auth/delete",
     "/schedule/reserve", 
     "/schedule/read", 
     "/schedule/stop", 

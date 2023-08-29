@@ -42,6 +42,11 @@ export const toastStates = {
     text: "새로고침 완료",
     severity: "success",
   },
+  SUCCESS_QUIT: {
+    open: true,
+    text: "회원 탈퇴 완료 8ㅅ8",
+    severity: "success",
+  },
   INVALID_NAME: {
     open: true,
     text: "아이디를 확인해주세요!",

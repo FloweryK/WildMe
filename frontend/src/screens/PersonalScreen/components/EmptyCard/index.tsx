@@ -23,7 +23,7 @@ const EmptyCard = (props: EmptyCardProps) => {
         <Card variant="outlined" className="card">
           <CardActionArea onClick={onClick}>
             <CardContent className="cardContent">
-              <AddIcon />
+              <AddIcon color="primary" />
             </CardContent>
           </CardActionArea>
         </Card>

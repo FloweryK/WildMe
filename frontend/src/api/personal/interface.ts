@@ -29,3 +29,7 @@ export interface StopScheduleRequest {
 export interface DeleteScheduleRequest {
   tag: string;
 }
+
+export interface DeleteAccountResponse {
+  message: string;
+}

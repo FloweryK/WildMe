@@ -1,9 +1,10 @@
 import datetime
 import jwt
 import bcrypt
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, g
 from app.constants.status_code import *
-from db.database import db_user
+from app.decorator import login_required
+from db.database import db_user, db_schedule
 
 
 class AuthBluePrint(Blueprint):
@@ -12,6 +13,7 @@ class AuthBluePrint(Blueprint):
 
         self.add_url_rule('/signup', 'signup', self.signup, methods=['POST'])
         self.add_url_rule('/signin', 'signin', self.signin, methods=['POST'])
+        self.add_url_rule('/delete', 'delete', self.delete, methods=['POST'])
     
     @staticmethod
     def signup():
@@ -66,5 +68,22 @@ class AuthBluePrint(Blueprint):
         access_token = jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], 'HS256')
 
         return {'Authorization': access_token}, OK
+    
+    @login_required
+    def delete(self):
+        # user
+        user = g.user
+
+        # delete schedules
+        schedules = [s for s in db_schedule.select_all() if s['name'] == user['name']]
+        for schedule in schedules:
+            db_schedule.delete(where={'tag': schedule['tag']})
+        
+        # delete user
+        db_user.delete(where={'id': user['id']})
+
+        return {'message': "Deleted"}, OK
+
+        
 
         

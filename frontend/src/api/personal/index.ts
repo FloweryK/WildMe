@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { cookie } from "store";
 import {
+  DeleteAccountResponse,
   DeleteScheduleRequest,
   GetScheduleResponse,
   ReserveScheduleResponse,
@@ -48,4 +49,20 @@ const deleteSchedule = async (request: DeleteScheduleRequest): Promise<any> => {
   return response.data;
 };
 
-export { reserveSchedule, getSchedule, stopSchedule, deleteSchedule };
+const deleteAccount = async (): Promise<any> => {
+  const headers = { Authorization: cookie.get("accessToken") };
+  const response: AxiosResponse<DeleteAccountResponse> = await instance.post(
+    `auth/delete`,
+    {},
+    { headers: headers }
+  );
+  return response.data;
+};
+
+export {
+  reserveSchedule,
+  getSchedule,
+  stopSchedule,
+  deleteSchedule,
+  deleteAccount,
+};
