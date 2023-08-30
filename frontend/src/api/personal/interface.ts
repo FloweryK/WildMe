@@ -17,6 +17,7 @@ export interface GetScheduleResponse {
   reserve_status: string;
   reserve_timestamp: number;
   reserve_message: string;
+  reserve_order: number;
   i_epoch: number;
   n_epoch: number;
   ETA: number;

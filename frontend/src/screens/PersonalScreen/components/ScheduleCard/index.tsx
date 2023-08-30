@@ -30,6 +30,27 @@ const secondsToHMS = (seconds: number) => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
+const getStatusText = (schedule: any) => {
+  switch (schedule.reserve_status) {
+    case "reserved":
+      return `대기 중 (${schedule.reserve_order}번째)`;
+    case "ongoing":
+      return `학습 중 (${schedule.i_epoch}/${
+        schedule.n_epoch
+      }, ETA: ${secondsToHMS(schedule.ETA)})`;
+    case "done":
+      return "완료";
+    case "failed":
+      return (
+        <>
+          오류 <br />({schedule.reserve_message})
+        </>
+      );
+    default:
+      return `확인 필요 (${schedule.reserve_status})`;
+  }
+};
+
 const ScheduleCard = (props: ScheduleCardProps) => {
   const { schedule, onClick, onStop, onDelete } = props;
 
@@ -48,21 +69,7 @@ const ScheduleCard = (props: ScheduleCardProps) => {
               <br />
               파일 이름: {schedule.filename}
               <br />
-              학습 상태: {schedule.reserve_status}
-              <br />
-              진행 상태:{" "}
-              {schedule.reserve_status === "reserved"
-                ? 0
-                : schedule.i_epoch + 1}{" "}
-              / {schedule.n_epoch}
-              <br />
-              남은 시간: {secondsToHMS(schedule.ETA)}
-              {schedule.reserve_message ? (
-                <>
-                  <br />
-                  실패 내용: {schedule.reserve_message}
-                </>
-              ) : null}
+              진행 상태: {getStatusText(schedule)}
             </Typography>
           </CardContent>
         </CardActionArea>

@@ -52,7 +52,6 @@ const PersonalScreen = () => {
   };
 
   const handleRefreshSchedule = async () => {
-    console.log(cookie.get("accessToken"));
     getSchedule().then((data) => {
       toastStore.setToast(toastStates.SUCCESS_REFRESH);
       setSchedules(data);

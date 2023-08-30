@@ -6,6 +6,7 @@ from flask import Blueprint, g, request, jsonify
 from app.constants.status_code import *
 from app.decorator import login_required
 from db.database import db_schedule
+from pprint import pprint
 
 
 class ScheduleBluePrint(Blueprint):
@@ -87,19 +88,39 @@ class ScheduleBluePrint(Blueprint):
     @login_required
     def read(self):
         user = g.user
-        schedule = db_schedule.select_all()
-        schedule = [{
+
+        # get all valid schedules
+        schedules = [{
             'tag': s['tag'],
             'name': s['name'],
             'filename': s['filename'],
             'reserve_status': s['reserve_status'],
             'reserve_timestamp': s['reserve_timestamp'],
             'reserve_message': s['reserve_message'],
+            'reserve_order': None,
             'i_epoch': s['i_epoch'],
             'n_epoch': s['n_epoch'],
             'ETA': s['ETA'],
-        } for s in schedule if (s['reserve_status'] != None) and (s['name'] == user['name'])]
-        return jsonify(schedule), OK
+        } for s in db_schedule.select_all() if (s['reserve_status'] != None)]
+
+        # sort schedules
+        schedules = sorted(schedules, key=lambda s: s['reserve_timestamp'])
+
+        # split done, undone schedules
+        schedules_done = [s for s in schedules if (s['reserve_status'] != "reserved")]
+        schedules_undone = [s for s in schedules if (s['reserve_status'] == "reserved")]
+
+        # sort undone schedules and calculate reserve order
+        for i, s in enumerate(schedules_undone):
+            schedules_undone[i]['reserve_order'] = i + 1
+        
+        # merge schedules
+        schedules = schedules_done + schedules_undone
+
+        # filter only the user's schedules
+        schedules = [s for s in schedules if s['name'] == user['name']]
+
+        return jsonify(schedules), OK
     
     @login_required
     def stop(self):
