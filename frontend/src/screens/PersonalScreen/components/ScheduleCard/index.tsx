@@ -40,6 +40,8 @@ const getStatusText = (schedule: any) => {
       }, ETA: ${secondsToHMS(schedule.ETA)})`;
     case "done":
       return "완료";
+    case "stop":
+      return "중지 중";
     case "failed":
       return (
         <>
