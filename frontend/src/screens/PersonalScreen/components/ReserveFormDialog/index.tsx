@@ -34,6 +34,8 @@ const detailsDefault = [
   { name: "lr", value: 1e-5 },
   { name: "warmup_steps", value: 4000 },
   { name: "label_smoothing", value: 0.1 },
+  { name: "augment_topn", value: 10 },
+  { name: "augment_threshold", value: 0.7 },
 ];
 
 const ReserveFormDialog = (props: ReserveFormProps) => {
@@ -92,6 +94,18 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
                 required
               />
             ))}
+            <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
+              <InputLabel>Data Augmentation</InputLabel>
+              <Select
+                id="augment"
+                name="augment"
+                label="Data Augmentation"
+                defaultValue={"true"}
+              >
+                <MenuItem value={"true"}>사용</MenuItem>
+                <MenuItem value={"false"}>미사용</MenuItem>
+              </Select>
+            </FormControl>
             <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
               <InputLabel>CUDA 사용</InputLabel>
               <Select
