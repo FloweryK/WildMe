@@ -19,8 +19,7 @@ class ChatDatasetBase(Dataset):
         
         # data augmentation
         if augment:
-            self.find_neighbors(augment_topn, augment_threshold)
-            self.augment_data()
+            self.augment_data(augment_topn, augment_threshold)
 
         # filter answers with no question
         self.ids = [value['id'] for value in self.data.values() if value['question_id']]
@@ -33,6 +32,7 @@ class ChatDatasetBase(Dataset):
         # set paths
         path_prefix = path_vocab[:-6] 
         path_txt = path_prefix + '.txt'
+        path_tmp = path_prefix + '.vocab'
 
         # create a tmp txt file for sentencepiece training
         with open(path_txt, 'w', encoding='utf8') as f:
@@ -59,7 +59,7 @@ class ChatDatasetBase(Dataset):
 
         # delete unnecessary files
         os.remove(path_txt)
-        os.remove(path_prefix + '.vocab')
+        os.remove(path_tmp)
 
         # load vocab
         self.vocab.Load(path_vocab)
@@ -74,40 +74,30 @@ class ChatDatasetBase(Dataset):
             for t in text:
                 text_encode.extend(self.vocab.EncodeAsIds(t) + [SEP])
             text_encode[-1] = EOS
+            
             self.data[chat_id]['text_encode'] = text_encode
             self.data[chat_id]['text_words'] = [self.vocab.DecodeIds(tid) for tid in text_encode]
-
-    def find_neighbors(self, augment_topn, augment_threshold):
+    
+    def augment_data(self, augment_topn, augment_threshold):
         # collect tagged data
-        tagged_data = []
-
-        for chat_id in self.data:
-            tagged_data.append(TaggedDocument(self.data[chat_id]['text_words'], [str(chat_id)]))
+        tagged_data = [TaggedDocument(words=self.data[chat_id]['text_words'], tags=[str(chat_id)]) for chat_id in self.data]
         
         # train doc2vec model
         model = Doc2Vec(vector_size=300, window=3, min_count=1, workers=4, epochs=100)
         model.build_vocab(tagged_data)
         model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)
 
-        # find neighbors
+        # find the last id
+        data_augmented = {}
+        id_cur = max(self.data.keys()) + 1
+
         for chat_id in self.data:
+            # find neighbors with sim >= augment_threshold
             neighbor_ids = [int(neighbor_id) for neighbor_id, sim in model.docvecs.most_similar(str(chat_id), topn=augment_topn) if sim >= augment_threshold]
 
             # if there's speaker in the data, filter only the sample speaker
             if 'speaker_name' in self.data[chat_id]:
                 neighbor_ids = [neighbor_id for neighbor_id in neighbor_ids if self.data[neighbor_id]['speaker_name'] == self.data[chat_id]['speaker_name']]
-
-            self.data[chat_id]['neighbor_ids'] = neighbor_ids
-    
-    def augment_data(self):
-        # find the last id
-        id_cur = max(self.data.keys()) + 1
-
-        # make augmented dataset
-        data_augmented = {}
-        for chat_id in self.data:
-            # get neighbor ids
-            neighbor_ids = self.data[chat_id]['neighbor_ids']
 
             # augment neighbor data
             for neighbor_id in neighbor_ids:
