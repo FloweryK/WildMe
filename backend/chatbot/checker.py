@@ -1,7 +1,7 @@
 import os
 import time
 import torch
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import Subset, DataLoader, random_split
 from torch.utils.tensorboard import SummaryWriter
 from chatbot.constants.custom_tokens import *
 from chatbot.dataset.base import collate_fn
@@ -11,6 +11,7 @@ from chatbot.utils import WarmupScheduler
 from chatbot.config import Config
 from chatbot.trainer import Trainer
 from db.database import db_schedule
+from pprint import pprint
 
 
 class Checker:
@@ -81,6 +82,13 @@ class Checker:
         train_size = int(config.r_split * len(dataset))
         trainset, testset = random_split(dataset, [train_size, len(dataset) - train_size])
 
+        # filter out augmented data in the testset
+        print("before filtering:", len(testset))
+        testset = Subset(testset, indices=[i for i, data in enumerate(testset) if not data['is_augmented']])
+        print("after filtering:", len(testset))
+        print("trainset:", len(trainset))
+        print("testset:", len(testset))
+
         # dataloader
         trainloader = DataLoader(trainset, batch_size=config.n_batch, shuffle=True, collate_fn=collate_fn)
         testloader = DataLoader(testset, batch_size=config.n_batch, shuffle=True, collate_fn=collate_fn)
@@ -104,7 +112,6 @@ class Checker:
         # trainer
         trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer, path_weight)
 
-        print("dataset size:", len(dataset))
         # train
         t_start = time.time()
         for epoch in range(config.n_epoch):

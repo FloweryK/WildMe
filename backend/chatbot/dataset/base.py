@@ -77,6 +77,7 @@ class ChatDatasetBase(Dataset):
             
             self.data[chat_id]['text_encode'] = text_encode
             self.data[chat_id]['text_words'] = [self.vocab.DecodeIds(tid) for tid in text_encode]
+            self.data[chat_id]['is_augmented'] = False
     
     def augment_data(self, augment_topn, augment_threshold):
         # collect tagged data
@@ -104,6 +105,7 @@ class ChatDatasetBase(Dataset):
                 neighbor = self.data[chat_id]
                 neighbor['id'] = id_cur
                 neighbor['text'] = self.data[neighbor_id]['text']
+                neighbor['is_augmented'] = True
 
                 data_augmented[id_cur] = neighbor
                 id_cur += 1
@@ -123,14 +125,19 @@ class ChatDatasetBase(Dataset):
         question_id = answer['question_id']
         question = self.data[question_id]
 
-        return (
-            torch.tensor(question['text_encode']),
-            torch.tensor(answer['text_encode']),
-        )
+        return {
+            'data': (torch.tensor(question['text_encode']), torch.tensor(answer['text_encode'])),
+            'is_augmented': answer['is_augmented']
+        }
 
 
 def collate_fn(inputs):
-    x_enc, x_dec = list(zip(*inputs))
+    x_enc = []
+    x_dec = []
+
+    for data in inputs:
+        x_enc.append(data['data'][0])
+        x_dec.append(data['data'][1])
 
     x_enc = torch.nn.utils.rnn.pad_sequence(x_enc, batch_first=True, padding_value=PAD)
     x_dec = torch.nn.utils.rnn.pad_sequence(x_dec, batch_first=True, padding_value=PAD)
