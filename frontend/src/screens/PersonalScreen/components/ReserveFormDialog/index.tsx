@@ -97,8 +97,8 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
             <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
               <InputLabel>Data Augmentation</InputLabel>
               <Select
-                id="augment"
-                name="augment"
+                id="is_augment"
+                name="is_augment"
                 label="Data Augmentation"
                 defaultValue={"true"}
               >
@@ -121,8 +121,8 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
             <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
               <InputLabel>AMP 사용</InputLabel>
               <Select
-                id="use_amp"
-                name="use_amp"
+                id="is_amp"
+                name="is_amp"
                 label="AMP 사용"
                 defaultValue={"true"}
               >
