@@ -1,18 +1,34 @@
-import os
 import time
 import torch
 from torch.utils.data import Subset, DataLoader, random_split
+from torch.optim.lr_scheduler import _LRScheduler
 from torch.utils.tensorboard import SummaryWriter
 from chatbot.constants.custom_tokens import *
 from chatbot.dataset.base import collate_fn
 from chatbot.dataset.kakaotalk import KakaotalkDataset
 from chatbot.model.classifier import Classifier
-from chatbot.utils import WarmupScheduler
 from chatbot.config import Config
 from chatbot.trainer import Trainer
 from db.database import db_schedule
-from pprint import pprint
 
+
+def get_model_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+class WarmupScheduler(_LRScheduler):
+    def __init__(self, optimizer, warmup_steps, d_model):
+        self.warmup_steps = warmup_steps
+        self.d_model = d_model
+        self.current_step = 0
+        super().__init__(optimizer)
+    
+    def get_lr(self):
+        self.current_step += 1
+        lr = self.d_model ** (-0.5) * min(self.current_step ** (-0.5), self.current_step * self.warmup_steps ** (-1.5))
+
+        return [lr for _ in self.base_lrs]
+    
 
 class Checker:
     def run(self):
@@ -41,40 +57,37 @@ class Checker:
             # run training
             try:
                 self.train(
-                    tag=schedule['tag'],
+                    path_config=schedule['path_config'],
                     path_data=schedule['path_data'],
                     path_vocab=schedule['path_vocab'],
-                    path_config=schedule['path_config'],
                     path_weight=schedule['path_weight'],
-                    prefix=schedule['name'],
                     speaker=schedule['speaker'],
+                    tag=schedule['tag'],
                 )
 
-                # update user's reserve_status
-                schedule = db_schedule.select({'tag': schedule['tag']})
+                # update as done
                 schedule['reserve_status'] = 'done'
                 db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
             except Exception as e:
                 print(e)
 
-                # update user's reserve_status 
-                schedule = db_schedule.select({'tag': schedule['tag']})
+                # update as failed
                 if schedule:
                     schedule['reserve_status'] = 'failed'
                     schedule['reserve_message'] = str(e)
                     db_schedule.update(where={"tag": schedule['tag']}, row=schedule)
 
 
-    def train(self, tag, path_data, path_config, path_vocab, path_weight, prefix, speaker):
+    def train(self, path_config, path_data, path_vocab, path_weight, speaker, tag):
         # load config
         config = Config(path_config)
 
         # dataset
         dataset = KakaotalkDataset(
-            path_data, 
-            path_vocab, 
+            path_data=path_data, 
+            path_vocab=path_vocab, 
             n_vocab=config.n_vocab,
-            augment=config.augment, 
+            is_augment=config.is_augment, 
             augment_topn=config.augment_topn, 
             augment_threshold=config.augment_threshold, 
             speaker=speaker
@@ -83,11 +96,7 @@ class Checker:
         trainset, testset = random_split(dataset, [train_size, len(dataset) - train_size])
 
         # filter out augmented data in the testset
-        print("before filtering:", len(testset))
         testset = Subset(testset, indices=[i for i, data in enumerate(testset) if not data['is_augmented']])
-        print("after filtering:", len(testset))
-        print("trainset:", len(trainset))
-        print("testset:", len(testset))
 
         # dataloader
         trainloader = DataLoader(trainset, batch_size=config.n_batch, shuffle=True, collate_fn=collate_fn)
@@ -96,6 +105,7 @@ class Checker:
         # model
         model = Classifier(config)
         model = model.to(config.device)
+        print("model parameters:", get_model_parameters(model))
 
         # criterion, optimizer and scheduler
         criterion = torch.nn.CrossEntropyLoss(ignore_index=PAD, label_smoothing=config.label_smoothing)
@@ -103,29 +113,35 @@ class Checker:
         scheduler = WarmupScheduler(optimizer, warmup_steps=config.warmup_steps, d_model=config.d_emb)
 
         # scaler
-        scaler = torch.cuda.amp.GradScaler(enabled=config.use_amp)
+        scaler = torch.cuda.amp.GradScaler(enabled=config.is_amp)
 
         # writer
-        os.makedirs(f'runs/{prefix}', exist_ok=True)
-        writer = SummaryWriter(log_dir=f'runs/{prefix}/vocab={config.n_vocab}_batch={config.n_batch}_accum={config.n_accum}_amp={config.use_amp}_warmup={config.warmup_steps}_demb={config.d_emb}')
+        writer = SummaryWriter()
 
         # trainer
-        trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer, path_weight)
+        trainer = Trainer(model, criterion, scaler, optimizer, scheduler, writer)
 
         # train
         t_start = time.time()
         for epoch in range(config.n_epoch):
-            trainer.run_epoch(tag, epoch, trainloader, device=config.device, train=True, use_amp=config.use_amp, n_accum=config.n_accum)
-            trainer.run_epoch(tag, epoch, testloader, device=config.device, train=False, use_amp=config.use_amp, n_accum=config.n_accum)
-            t_mid = time.time()
+            # train and test
+            trainer.run_epoch(epoch, trainloader, config.device, True, config.is_amp, config.n_accum)
+            trainer.run_epoch(epoch, testloader, config.device, False, config.is_amp, config.n_accum)
 
-            # udpate schedule's epoch and ETA
+            # check schedule delete or stop
             schedule = db_schedule.select({"tag": tag})
+            if (not schedule) or (schedule['reserve_status'] == 'stop'):
+                break
+            
+            # save weight
+            trainer.save_weight(path_weight)
+
+            # calculate ETA
+            t_mid = time.time()
+            ETA = (t_mid - t_start) * (config.n_epoch - epoch - 1) / (epoch + 1)
+
+            # udpate schedule
             schedule['i_epoch'] = epoch
             schedule['n_epoch'] = config.n_epoch
-            schedule['ETA'] = (t_mid - t_start) * (config.n_epoch - epoch - 1) / (epoch + 1)
+            schedule['ETA'] = ETA
             db_schedule.update({"tag": tag}, schedule)
-
-            # check stop sign
-            if schedule['reserve_status'] == 'stop':
-                break

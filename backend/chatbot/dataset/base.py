@@ -7,7 +7,7 @@ from chatbot.constants.custom_tokens import *
 
 
 class ChatDatasetBase(Dataset):
-    def __init__(self, path_data, path_vocab, n_vocab, augment, augment_topn, augment_threshold):
+    def __init__(self, path_data, path_vocab, n_vocab, is_augment, augment_topn, augment_threshold):
         super().__init__()
 
         # load and encode data
@@ -18,7 +18,7 @@ class ChatDatasetBase(Dataset):
         self.encode_data()
         
         # data augmentation
-        if augment:
+        if is_augment:
             self.augment_data(augment_topn, augment_threshold)
 
         # filter answers with no question
