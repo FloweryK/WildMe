@@ -100,7 +100,7 @@ const ReserveFormDialog = (props: ReserveFormProps) => {
                 id="is_augment"
                 name="is_augment"
                 label="Data Augmentation"
-                defaultValue={"true"}
+                defaultValue={"false"}
               >
                 <MenuItem value={"true"}>사용</MenuItem>
                 <MenuItem value={"false"}>미사용</MenuItem>
