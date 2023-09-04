@@ -9,7 +9,7 @@ const Copyright = (props: any) => {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://wildme.floweryk.com.ngrok.app">
+      <Link color="inherit" href="https://wildme.floweryk.ai">
         WildMe
       </Link>{" "}
       {new Date().getFullYear()}
