@@ -27,7 +27,7 @@ const detailsDefault = [
   { name: "d_hidden", value: 2048 },
   { name: "dropout", value: 0.1 },
   { name: "scale", value: 8.0 },
-  { name: "r_split", value: 0.7 },
+  { name: "r_split", value: 0.9 },
   { name: "n_epoch", value: 50 },
   { name: "n_batch", value: 32 },
   { name: "n_accum", value: 1 },
