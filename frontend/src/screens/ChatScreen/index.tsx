@@ -134,7 +134,7 @@ const ChatScreen = () => {
               size="small"
               value={inputValue}
               onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyDown}
               InputProps={{
                 style: {
                   maxHeight: "100%",
