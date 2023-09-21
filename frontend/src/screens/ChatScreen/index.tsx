@@ -85,7 +85,9 @@ const ChatScreen = () => {
   };
 
   useEffect(() => {
-    setInputValue("");
+    if (chatMsgs[chatMsgs.length - 1].side == "right") {
+      setInputValue("");
+    }
 
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
