@@ -113,6 +113,10 @@ class Database:
             file.write(data_encrypted)
 
 
+
+DB_HOST = os.environ.get('DB_HOST')
+
+
 db_user = Database(
     schema=[
         "id",
@@ -122,8 +126,8 @@ db_user = Database(
     credentials=[
         "password"
     ],
-    path_fs='db/users', 
-    path_data='db/users/data.json'
+    path_fs=os.path.join(DB_HOST, 'users'), 
+    path_data=os.path.join(DB_HOST, 'users', 'data.json')
 )
 
 db_schedule = Database(
@@ -145,6 +149,6 @@ db_schedule = Database(
         "ETA",
     ],
     credentials=[],
-    path_fs='db/schedules', 
-    path_data='db/schedules/data.json'
+    path_fs=os.path.join(DB_HOST, 'schedules'), 
+    path_data=os.path.join(DB_HOST, 'schedules', 'data.json')
 )

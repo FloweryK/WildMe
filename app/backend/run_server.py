@@ -40,7 +40,7 @@ load_dotenv()
 # app settings
 app = Flask(__name__)
 app = Flask(__name__, static_folder='build/')
-app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+app.config['FLASK_JWT_SECRET_KEY'] = os.environ.get('FLASK_JWT_SECRET_KEY')
 CORS(app)
 
 # app routings
@@ -67,4 +67,4 @@ app.register_blueprint(InferenceBluePrint('inference', __name__), url_prefix='/i
 
 
 if __name__ == '__main__':
-    app.run(host=os.environ.get('HOST'), port=os.environ.get('PORT'))
+    app.run(host=os.environ.get('FLASK_HOST'), port=os.environ.get('FLASK_PORT'))

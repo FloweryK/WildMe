@@ -65,7 +65,7 @@ class AuthBluePrint(Blueprint):
         }
 
         # create access token
-        access_token = jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], 'HS256')
+        access_token = jwt.encode(payload, current_app.config['FLASK_JWT_SECRET_KEY'], 'HS256')
 
         return {'Authorization': access_token}, OK
     

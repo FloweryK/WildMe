@@ -15,4 +15,4 @@ class Crypt:
         return self.fernet.decrypt(data.encode()).decode()
 
 
-crypt = Crypt(os.environ.get('FERNET_KEY'))
+crypt = Crypt(os.environ.get('FLASK_FERNET_KEY'))

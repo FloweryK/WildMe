@@ -16,7 +16,7 @@ def login_required(func):
             return {'message': 'Unauthorized access'}, UNAUTHORIZED
         else:
             try:
-                payload = jwt.decode(access_token, current_app.config["JWT_SECRET_KEY"], "HS256")
+                payload = jwt.decode(access_token, current_app.config["FLASK_JWT_SECRET_KEY"], "HS256")
             except jwt.InvalidTokenError:
                 payload = None
             
