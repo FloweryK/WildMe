@@ -2,7 +2,6 @@ import os
 import sentencepiece as spm
 import torch
 from torch.utils.data import Dataset
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from chatbot.constants.custom_tokens import *
 
 
@@ -78,42 +77,6 @@ class ChatDatasetBase(Dataset):
             self.data[chat_id]['text_encode'] = text_encode
             self.data[chat_id]['text_words'] = [self.vocab.DecodeIds(tid) for tid in text_encode]
             self.data[chat_id]['is_augmented'] = False
-    
-    def augment_data(self, augment_topn, augment_threshold):
-        # collect tagged data
-        tagged_data = [TaggedDocument(words=self.data[chat_id]['text_words'], tags=[str(chat_id)]) for chat_id in self.data]
-        
-        # train doc2vec model
-        model = Doc2Vec(vector_size=300, window=3, min_count=1, workers=4, epochs=100)
-        model.build_vocab(tagged_data)
-        model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)
-
-        # find the last id
-        data_augmented = {}
-        id_cur = max(self.data.keys()) + 1
-
-        for chat_id in self.data:
-            # find neighbors with sim >= augment_threshold
-            neighbor_ids = [int(neighbor_id) for neighbor_id, sim in model.docvecs.most_similar(str(chat_id), topn=augment_topn) if sim >= augment_threshold]
-
-            # if there's speaker in the data, filter only the sample speaker
-            if 'speaker_name' in self.data[chat_id]:
-                neighbor_ids = [neighbor_id for neighbor_id in neighbor_ids if self.data[neighbor_id]['speaker_name'] == self.data[chat_id]['speaker_name']]
-
-            # augment neighbor data
-            for neighbor_id in neighbor_ids:
-                neighbor = self.data[chat_id]
-                neighbor['id'] = id_cur
-                neighbor['text'] = self.data[neighbor_id]['text']
-                neighbor['is_augmented'] = True
-
-                data_augmented[id_cur] = neighbor
-                id_cur += 1
-        
-        # merge
-        print("before augment:", len(self.data))
-        self.data = {**self.data, **data_augmented}
-        print("after augment:", len(self.data))
     
     def __len__(self):
         return self.len
